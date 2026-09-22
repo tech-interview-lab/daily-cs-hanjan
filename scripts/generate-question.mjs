@@ -12,6 +12,9 @@ if (!GEMINI_API_KEY) {
   process.exit(1);
 }
 
+const MODEL = "gemini-3.6-flash";
+const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+
 const SYSTEM_PROMPT = `너는 신입~주니어 개발자 기술면접 질문 큐레이터다.
 
 역할:
@@ -31,25 +34,22 @@ const SYSTEM_PROMPT = `너는 신입~주니어 개발자 기술면접 질문 큐
 }`;
 
 async function generateQuestion() {
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: SYSTEM_PROMPT }],
-          },
-        ],
-        tools: [{ google_search: {} }],
-        generationConfig: {
-          temperature: 0.9,
+  const response = await fetch(`${ENDPOINT}?key=${GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: SYSTEM_PROMPT }],
         },
-      }),
-    }
-  );
+      ],
+      tools: [{ google_search: {} }],
+      generationConfig: {
+        temperature: 0.9,
+      },
+    }),
+  });
 
   if (!response.ok) {
     const errText = await response.text();
@@ -63,8 +63,6 @@ async function generateQuestion() {
   }
 
   const rawText = candidate.content?.parts?.map((p) => p.text || "").join("") || "";
-
-  // 혹시 모델이 ```json ... ``` 로 감싸서 응답하는 경우 대비
   const cleaned = rawText.replace(/```json\s*|\s*```/g, "").trim();
 
   let parsed;
@@ -83,7 +81,6 @@ async function generateQuestion() {
 
 generateQuestion()
   .then((result) => {
-    // 다음 스크립트가 파싱할 수 있도록 순수 JSON만 stdout에 출력
     console.log(JSON.stringify(result));
   })
   .catch((err) => {
