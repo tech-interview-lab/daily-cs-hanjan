@@ -1,0 +1,36 @@
+name: Daily CS Question
+
+on:
+  schedule:
+    # 매일 KST 09:00 = UTC 00:00
+    - cron: "0 0 * * *"
+  workflow_dispatch: {} # 수동 실행 버튼 (테스트용)
+
+jobs:
+  post-question:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate question via Gemini
+        id: generate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          RESULT=$(node scripts/generate-question.mjs)
+          echo "question_json<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$RESULT" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Discussion
+        env:
+          DISCUSSION_PAT: ${{ secrets.DISCUSSION_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          node scripts/create-discussion.mjs '${{ steps.generate.outputs.question_json }}'
