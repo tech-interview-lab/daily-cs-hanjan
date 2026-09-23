@@ -2,8 +2,8 @@ name: Daily CS Question
 
 on:
   schedule:
-    # 매일 KST 09:00 = UTC 00:00
-    - cron: "0 0 * * *"
+    # 매일 KST 09:05 = UTC 00:05
+    - cron: "5 0 * * *"
   workflow_dispatch: {} # 수동 실행 버튼 (테스트용)
 
 jobs:
@@ -17,6 +17,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+
+      - name: Close previous discussion
+        env:
+          DISCUSSION_PAT: ${{ secrets.DISCUSSION_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          node scripts/close-previous-discussion.mjs
 
       - name: Generate question via Gemini
         id: generate
