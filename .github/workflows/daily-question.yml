@@ -2,9 +2,9 @@ name: Daily CS Question
 
 on:
   schedule:
-    - cron: "5 9 * * *"
-      timezone: "Asia/Seoul"
-  workflow_dispatch: {} # 수동 실행 버튼 (테스트용)
+    # 매일 KST 09:05 = UTC 00:05
+    - cron: "5 0 * * *"
+  workflow_dispatch: {}
 
 jobs:
   post-question:
