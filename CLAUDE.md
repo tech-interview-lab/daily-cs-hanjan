@@ -22,7 +22,9 @@ CS한잔 사이트. GitHub Discussions의 질문과 답변을 카테고리, 작�
 - 스택: Next.js(App Router) + TypeScript, Vercel 배포. 근거와 세부 선택은 `docs/adr/0003-tech-stack.md`
 - 갱신: GitHub 웹훅으로 해당 질문의 캐시만 재검증, 열린 질문 화면은 15초 폴링(`docs/adr/0001-rendering-strategy.md`)
 - 테스트 Vitest, 레이어 의존 검사 dependency-cruiser
-- 설치, 실행, 빌드, 점검 명령: S0에서 `site/package.json` 생성 후 기재
+- 명령(`site/`에서 실행): `npm ci`, `npm run dev`, `npm run build`
+- 점검: `npm run check`(타입, 레이어 의존, 테스트). 실제 GitHub 대조는 `GITHUB_TOKEN=$(gh auth token) npm run test:live`
+- 의존성을 바꾸면 `package-lock.json`에 플랫폼별 번들러 패키지가 남았는지 확인합니다(npm 선택 의존성 버그). 빠졌으면 `node_modules`와 lock을 지우고 `npm install`
 
 ## 폴더 구조
 

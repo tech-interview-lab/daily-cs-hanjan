@@ -28,7 +28,7 @@
 
 | 영역 | 선택 | 근거 | 상태 |
 |---|---|---|---|
-| 언어 | TypeScript | 포트(인터페이스) 계약 위반을 컴파일 단계에서 발견 | 확정 |
+| 언어 | TypeScript 6 (7이 아님) | 포트(인터페이스) 계약 위반을 컴파일 단계에서 발견. dependency-cruiser가 TypeScript 7을 아직 지원하지 않아 6으로 고정. 지원되면 7로 올림 | 확정 |
 | 프레임워크 | Next.js App Router. 버전은 S0에서 고정 | 2장 | 확정 |
 | 배포 | Vercel Hobby | ADR-0001 | 확정 |
 | 화면 | 서버 컴포넌트 기본. 클라이언트 컴포넌트는 테마 전환, 검색 입력, 새 답변 폴링에 한정 | JS 최소화. View는 ViewModel만 받음 | 확정(AI 제안 수락) |
@@ -40,7 +40,7 @@
 | 글꼴 | Pretendard를 `next/font/local`로 자체 호스팅 | 외부 CDN 의존 없음. 레이아웃 이동 방지 | 확정(AI 제안 수락) |
 | 테스트 | Vitest | TypeScript 설정 공유 | 확정(AI 제안 수락) |
 | 의존 규칙 검사 | dependency-cruiser | [site-layer-rules.md](../../.claude/rules/site-layer-rules.md)의 import 방향을 CI에서 검사 | 확정(AI 제안 수락) |
-| GraphQL 토큰 | fine-grained PAT, Discussions 읽기 권한만. Vercel 환경 변수 | 서버에만 보관 | 확정(AI 제안 수락) |
+| GraphQL 토큰 | fine-grained PAT, Discussions 읽기 권한만. Vercel 환경 변수 | 서버에만 보관. 토큰 없는 요청은 거부됨(S0에서 HTTP 403 확인) | 확정(AI 제안 수락) |
 | 웹훅 비밀값 | Vercel 환경 변수 | 서명 검증 | 확정(AI 제안 수락) |
 
 ## 4. 결정
