@@ -1,9 +1,10 @@
 import type { CategorySummary } from "@/application/usecases/list-categories";
 import type { AnswerThread, QuestionDetail } from "@/application/usecases/get-question-detail";
 import type { CategoryQuestions } from "@/application/usecases/list-questions-by-category";
+import type { AuthorAnswers, AuthorSummary } from "@/application/usecases/list-authors";
 import type { QuestionSummary } from "@/application/usecases/question-summary";
 import type { Answer } from "@/domain/entities/answer";
-import type { AnswerVM, CategoryPageVM, NavItemVM, QuestionDetailVM, QuestionItemVM, ThreadVM } from "../viewmodels";
+import type { AnswerVM, AuthorPageVM, CategoryPageVM, NavItemVM, QuestionDetailVM, QuestionItemVM, ThreadVM } from "../viewmodels";
 
 const KST_DATE = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" });
 
@@ -19,6 +20,10 @@ export function formatKstDate(iso: string): string {
 
 export function formatKstDateTime(iso: string): string {
   return KST_DATE_TIME.format(new Date(iso));
+}
+
+export function authorHref(login: string): string {
+  return `/author/${encodeURIComponent(login)}`;
 }
 
 export function questionHref(number: number): string {
@@ -65,6 +70,8 @@ function presentAnswer(answer: Answer): AnswerVM {
     id: answer.id,
     authorLabel: answer.author ?? DELETED_AUTHOR_LABEL,
     authorDeleted: answer.author === null,
+    authorHref: answer.author ? authorHref(answer.author) : null,
+    authorAvatarUrl: answer.authorAvatarUrl,
     dateText: formatKstDateTime(answer.createdAt),
     dateTime: answer.createdAt,
     bodyHtml: answer.bodyHtml,
@@ -88,5 +95,34 @@ export function presentQuestionDetail(detail: QuestionDetail): QuestionDetailVM 
     discussionUrl: detail.url,
     pollUrl: `/api/questions/${detail.number}/answers`,
     threads: presentThreads(detail.threads),
+  };
+}
+
+export function presentAuthorNav(authors: readonly AuthorSummary[]): NavItemVM[] {
+  return authors.map((author) => ({
+    label: author.login,
+    href: authorHref(author.login),
+    countText: String(author.answerCount),
+    countLabel: `답변 ${author.answerCount}개`,
+    avatarUrl: author.avatarUrl,
+  }));
+}
+
+export function presentAuthorPage(result: AuthorAnswers): AuthorPageVM {
+  return {
+    login: result.login,
+    avatarUrl: result.avatarUrl,
+    countText: `답변 ${result.answers.length}개`,
+    profileUrl: `https://github.com/${encodeURIComponent(result.login)}`,
+    answers: result.answers.map(({ answer, question }) => ({
+      id: answer.id,
+      questionText: question.text,
+      questionHref: questionHref(question.number),
+      categoryLabel: question.category,
+      categoryHref: categoryHref(question.categorySlug),
+      dateText: formatKstDateTime(answer.createdAt),
+      dateTime: answer.createdAt,
+      bodyHtml: answer.bodyHtml,
+    })),
   };
 }

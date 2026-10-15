@@ -1,3 +1,12 @@
+.group + .group { margin-top: var(--space-6); }
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
 .heading {
   font-size: 0.875rem;
   font-weight: 600;

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "../styles/global.css";
 import type { ShellVM } from "../viewmodels";
-import { CategoryNav } from "./CategoryNav";
+import { SiteNav } from "./CategoryNav";
 import { MobileMenu } from "./MobileMenu";
 import styles from "./shell.module.css";
 import { THEME_INIT_SCRIPT, ThemeToggle } from "./ThemeToggle";
@@ -19,7 +19,7 @@ export function RootShell({ vm, children }: { readonly vm: ShellVM; readonly chi
         <header className={styles.header}>
           <div className={styles.headerInner}>
             <MobileMenu>
-              <CategoryNav items={vm.categories} headingId="menu-categories" />
+              <SiteNav categories={vm.categories} authors={vm.authors} idPrefix="menu" />
             </MobileMenu>
             <Link href="/" className={styles.siteName}>CS한잔</Link>
             <span className={styles.spacer} />
@@ -27,8 +27,8 @@ export function RootShell({ vm, children }: { readonly vm: ShellVM; readonly chi
           </div>
         </header>
         <div className={styles.layout}>
-          <aside className={styles.sidebar} aria-label="사이트 메뉴">
-            <CategoryNav items={vm.categories} headingId="sidebar-categories" />
+          <aside className={styles.sidebar}>
+            <SiteNav categories={vm.categories} authors={vm.authors} idPrefix="sidebar" />
           </aside>
           <main id="main" className={styles.main} tabIndex={-1}>
             {children}
