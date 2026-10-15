@@ -61,12 +61,3 @@ export function mergeNewThreads(current: readonly ThreadVM[], latest: readonly T
   if (!changed) return { threads: [...current], ...NO_CHANGE };
   return { threads: kept, ...counts };
 }
-
-export function announceNew(result: Pick<MergeResult, "newAnswers" | "newReplies" | "edited" | "removed">): string {
-  const parts: string[] = [];
-  if (result.newAnswers) parts.push(`새 답변 ${result.newAnswers}건`);
-  if (result.newReplies) parts.push(`새 답글 ${result.newReplies}건`);
-  if (result.edited) parts.push(`수정 ${result.edited}건`);
-  if (result.removed) parts.push(`삭제 ${result.removed}건`);
-  return `${parts.join(", ")}이 반영되었습니다.`;
-}

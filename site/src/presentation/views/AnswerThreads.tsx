@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { announceNew, mergeNewThreads } from "../presenters/merge-threads";
+import { mergeNewThreads } from "../presenters/merge-threads";
 import type { AnswerVM, ThreadVM } from "../viewmodels";
 import { Avatar } from "./Avatar";
 import styles from "./detail.module.css";
@@ -22,7 +22,6 @@ type Props = {
 
 export function AnswerThreads({ initialThreads, pollUrl, discussionUrl }: Props) {
   const [threads, setThreads] = useState<readonly ThreadVM[]>(initialThreads);
-  const [message, setMessage] = useState("");
   const [failures, setFailures] = useState(0);
   const threadsRef = useRef(threads);
   threadsRef.current = threads;
@@ -40,7 +39,6 @@ export function AnswerThreads({ initialThreads, pollUrl, discussionUrl }: Props)
         const merged = mergeNewThreads(threadsRef.current, latest);
         if (merged.newAnswers || merged.newReplies || merged.edited || merged.removed) {
           setThreads(merged.threads);
-          setMessage(announceNew(merged));
         }
         setFailures(0);
       } catch {
@@ -63,7 +61,6 @@ export function AnswerThreads({ initialThreads, pollUrl, discussionUrl }: Props)
   return (
     <section aria-labelledby="answers-title">
       <h2 id="answers-title" className={styles.answersTitle}>답변 {threads.length}</h2>
-      <p className="visually-hidden" aria-live="polite">{message}</p>
       {threads.length === 0 ? (
         <p className={styles.empty}>
           아직 답변이 없습니다. <a href={discussionUrl}>Discussions에서 첫 답변을 남겨 보세요</a>.
