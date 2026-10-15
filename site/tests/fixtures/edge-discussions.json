@@ -1,0 +1,136 @@
+[
+  {
+    "question": {
+      "number": 201,
+      "title": "[네트워크] 2026-10-20 오늘의 질문",
+      "text": "TCP와 UDP의 주요 차이점을 데이터 전송의 신뢰성과 속도 관점에서 설명해 주시고, 실제 서비스 환경에서 각 프로토콜을 선택하는 기준에 대해 말씀해 주세요.",
+      "note": "전송 계층 프로토콜의 신뢰성과 속도의 트레이드오프를 이해하는지 확인하는 기출 주제입니다.",
+      "category": "네트워크",
+      "createdAt": "2026-10-20T00:05:00Z",
+      "closed": true,
+      "url": "https://github.com/tech-interview-lab/daily-cs-hanjan/discussions/201",
+      "bodyHtml": ""
+    },
+    "answers": [
+      {
+        "id": "E1",
+        "questionNumber": 201,
+        "author": "lapera00",
+        "body": "TCP는 연결 지향",
+        "bodyHtml": "<p>TCP는 <strong>연결 지향</strong> 프로토콜로 3-way handshake 후 순서 보장과 재전송을 제공합니다. 😀🚀</p><ul><li>신뢰성: 높음</li><li>속도: 상대적으로 느림</li></ul><p>참고: <a href=\"https://developer.mozilla.org/ko/docs/Glossary/TCP\" rel=\"noopener noreferrer nofollow\">MDN TCP 문서</a></p>",
+        "bodyText": "TCP는 연결 지향",
+        "createdAt": "2026-10-20T01:00:00Z",
+        "parentId": null
+      },
+      {
+        "id": "E2",
+        "questionNumber": 201,
+        "author": null,
+        "body": "탈퇴",
+        "bodyHtml": "<p>탈퇴한 계정이 남긴 답변입니다. UDP는 비연결형이라 빠릅니다.</p>",
+        "bodyText": "탈퇴",
+        "createdAt": "2026-10-20T02:00:00Z",
+        "parentId": null
+      },
+      {
+        "id": "E3",
+        "questionNumber": 201,
+        "author": "00kang",
+        "body": "",
+        "bodyHtml": "",
+        "bodyText": "",
+        "createdAt": "2026-10-20T03:00:00Z",
+        "parentId": null
+      },
+      {
+        "id": "E4",
+        "questionNumber": 201,
+        "author": "rn1217",
+        "body": "코드",
+        "bodyHtml": "<p>긴 코드와 표 예시입니다.</p><pre><code>const result = await fetch('https://api.example.com/v1/resources?param0=value0&param1=value1&param2=value2&param3=value3&param4=value4&param5=value5&param6=value6&param7=value7&param8=value8&param9=value9&param10=value10&param11=value11&param12=value12&param13=value13&param14=value14&param15=value15&param16=value16&param17=value17&param18=value18&param19=value19&param20=value20&param21=value21&param22=value22&param23=value23&param24=value24&param25=value25&param26=value26&param27=value27&param28=value28&param29=value29');\n</code></pre><table><thead><tr><th>열0</th><th>열1</th><th>열2</th><th>열3</th><th>열4</th><th>열5</th><th>열6</th><th>열7</th><th>열8</th><th>열9</th><th>열10</th><th>열11</th></tr></thead><tbody><tr><td>값 0 긴 텍스트</td><td>값 1 긴 텍스트</td><td>값 2 긴 텍스트</td><td>값 3 긴 텍스트</td><td>값 4 긴 텍스트</td><td>값 5 긴 텍스트</td><td>값 6 긴 텍스트</td><td>값 7 긴 텍스트</td><td>값 8 긴 텍스트</td><td>값 9 긴 텍스트</td><td>값 10 긴 텍스트</td><td>값 11 긴 텍스트</td></tr></tbody></table><p>아주 긴 URL: https://example.com/very-long-path-segment-very-long-path-segment-very-long-path-segment-very-long-path-segment-very-long-path-segment-very-long-path-segment-very-long-path-segment-very-long-path-segment-end</p>",
+        "bodyText": "코드",
+        "createdAt": "2026-10-20T04:00:00Z",
+        "parentId": null
+      },
+      {
+        "id": "E5",
+        "questionNumber": 201,
+        "author": "ssun4098",
+        "body": "인용",
+        "bodyHtml": "<blockquote><p>인용: 실시간 스트리밍은 UDP가 유리합니다.</p></blockquote><p>저는 게임 서버에서 UDP 위에 자체 재전송을 얹은 경험이 있습니다.</p>",
+        "bodyText": "인용",
+        "createdAt": "2026-10-20T05:00:00Z",
+        "parentId": null
+      },
+      {
+        "id": "R1",
+        "questionNumber": 201,
+        "author": "seul1219",
+        "body": "질문",
+        "bodyHtml": "<p>자체 재전송은 어떤 방식으로 구현하셨나요?</p>",
+        "bodyText": "질문",
+        "createdAt": "2026-10-20T06:00:00Z",
+        "parentId": "E5"
+      },
+      {
+        "id": "R2",
+        "questionNumber": 201,
+        "author": "ssun4098",
+        "body": "답",
+        "bodyHtml": "<p>시퀀스 번호와 ACK 타이머를 두었습니다.</p>",
+        "bodyText": "답",
+        "createdAt": "2026-10-20T07:00:00Z",
+        "parentId": "E5"
+      },
+      {
+        "id": "C1",
+        "questionNumber": 201,
+        "author": "YunDaeHyeon",
+        "body": "🔒 다음 질문이 올라와서 이 토론은 마감되었습니다.\n늦게라도 답변 남기고 싶으시면 편하게 댓글 달아주세요 🐢",
+        "bodyHtml": "<p>🔒 다음 질문이 올라와서 이 토론은 마감되었습니다.</p>",
+        "bodyText": "🔒 다음 질문이 올라와서 이 토론은 마감되었습니다.",
+        "createdAt": "2026-10-21T00:05:00Z",
+        "parentId": null
+      }
+    ]
+  },
+  {
+    "question": {
+      "number": 202,
+      "title": "[CS] 2026-10-21 오늘의 질문",
+      "text": "프로세스와 스레드의 차이점을 메모리 공유 관점에서 설명해 주세요.",
+      "note": null,
+      "category": "CS",
+      "createdAt": "2026-10-21T00:05:00Z",
+      "closed": false,
+      "url": "https://github.com/tech-interview-lab/daily-cs-hanjan/discussions/202",
+      "bodyHtml": ""
+    },
+    "answers": [
+      {
+        "id": "F1",
+        "questionNumber": 202,
+        "author": "lapera00",
+        "body": "프로세스",
+        "bodyHtml": "<p>프로세스는 독립된 메모리 공간을, 스레드는 같은 프로세스의 힙을 공유합니다.</p>",
+        "bodyText": "프로세스",
+        "createdAt": "2026-10-21T01:00:00Z",
+        "parentId": null
+      }
+    ]
+  },
+  {
+    "question": {
+      "number": 203,
+      "title": "[AI] 2026-10-22 오늘의 질문",
+      "text": "LLM의 환각 현상을 줄이는 방법은?",
+      "note": null,
+      "category": "AI",
+      "createdAt": "2026-10-22T00:05:00Z",
+      "closed": false,
+      "url": "https://github.com/tech-interview-lab/daily-cs-hanjan/discussions/203",
+      "bodyHtml": ""
+    },
+    "answers": []
+  }
+]
