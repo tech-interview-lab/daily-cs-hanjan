@@ -14,6 +14,7 @@
   --color-code-bg: #f1f5f9;
   --color-mark-bg: #fef08a;
   --color-mark-fg: #1e293b;
+  --scroll-shadow: rgb(15 23 42 / 0.18);
 
   --font-sans: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -54,6 +55,7 @@
   --color-code-bg: #0f172a;
   --color-mark-bg: #713f12;
   --color-mark-fg: #fef9c3;
+  --scroll-shadow: rgb(0 0 0 / 0.6);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -72,6 +74,7 @@
     --color-code-bg: #0f172a;
     --color-mark-bg: #713f12;
     --color-mark-fg: #fef9c3;
+  --scroll-shadow: rgb(0 0 0 / 0.6);
   }
 }
 
