@@ -1,9 +1,8 @@
 // 사용법: node scripts/visual-check.mjs <baseUrl> <outDir> <path...>  (VIEWPORT_ONLY=1이면 첫 화면만 캡처)
 // 폭 4개 × 라이트/다크로 캡처하고 가로 넘침, 대비, 접근 가능한 이름, 키보드 동작을 측정한다.
-import { spawn } from "node:child_process";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { launchChrome, sleep } from "./lib/cdp.mjs";
 
 const [baseUrl, outDir, ...paths] = process.argv.slice(2);
 if (!baseUrl || !outDir || paths.length === 0) {
@@ -11,62 +10,11 @@ if (!baseUrl || !outDir || paths.length === 0) {
   process.exit(2);
 }
 
-const CHROME = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const PORT = 9333;
 const WIDTHS = [375, 768, 1024, 1440];
 const THEMES = ["light", "dark"];
 
 mkdirSync(outDir, { recursive: true });
-const chrome = spawn(CHROME, [
-  "--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run",
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), "hanjan-chrome-"))}`, "about:blank",
-], { stdio: "ignore" });
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-async function connect() {
-  for (let i = 0; i < 50; i++) {
-    try {
-      const targets = await (await fetch(`http://127.0.0.1:${PORT}/json/list`)).json();
-      const page = targets.find((t) => t.type === "page");
-      if (page) return page.webSocketDebuggerUrl;
-    } catch {}
-    await sleep(200);
-  }
-  throw new Error("Chrome에 연결하지 못했습니다.");
-}
-
-const ws = new WebSocket(await connect());
-await new Promise((r) => ws.addEventListener("open", r, { once: true }));
-let seq = 0;
-const pending = new Map();
-const listeners = [];
-ws.addEventListener("message", (event) => {
-  const msg = JSON.parse(event.data);
-  if (msg.id && pending.has(msg.id)) {
-    const { resolve, reject } = pending.get(msg.id);
-    pending.delete(msg.id);
-    msg.error ? reject(new Error(msg.error.message)) : resolve(msg.result);
-  } else if (msg.method) listeners.forEach((l) => l(msg));
-});
-const send = (method, params = {}) =>
-  new Promise((resolve, reject) => {
-    const id = ++seq;
-    pending.set(id, { resolve, reject });
-    ws.send(JSON.stringify({ id, method, params }));
-  });
-const waitFor = (method) => new Promise((resolve) => {
-  const l = (msg) => { if (msg.method === method) { listeners.splice(listeners.indexOf(l), 1); resolve(msg); } };
-  listeners.push(l);
-});
-const evaluate = async (expression) => (await send("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true })).result.value;
-const key = async (k, code = k, keyCode = 0) => {
-  await send("Input.dispatchKeyEvent", { type: "keyDown", key: k, code, windowsVirtualKeyCode: keyCode });
-  await send("Input.dispatchKeyEvent", { type: "keyUp", key: k, code, windowsVirtualKeyCode: keyCode });
-};
-
-await send("Page.enable");
-await send("Runtime.enable");
+const { send, evaluate, key, open, viewport, close } = await launchChrome();
 
 const PAGE_CHECKS = `(() => {
   const lum = (c) => { const m = c.match(/[\\d.]+/g).map(Number); const [r,g,b] = m.slice(0,3).map(v => { v/=255; return v <= 0.03928 ? v/12.92 : ((v+0.055)/1.055)**2.4; }); return 0.2126*r + 0.7152*g + 0.0722*b; };
@@ -94,20 +42,11 @@ const PAGE_CHECKS = `(() => {
   };
 })()`;
 
-async function open(url) {
-  const loaded = waitFor("Page.loadEventFired");
-  await send("Page.navigate", { url });
-  await loaded;
-  await evaluate("document.fonts.ready.then(() => true)");
-  await sleep(150);
-}
-
 const report = [];
 for (const path of paths) {
   for (const theme of THEMES) {
     for (const width of WIDTHS) {
-      await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
-      await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: theme }] });
+      await viewport(width, theme);
       await open(baseUrl + path);
       const checks = await evaluate(PAGE_CHECKS);
       const name = `${path === "/" ? "home" : path.replace(/^\//, "").replace(/\//g, "-")}-${theme}-${width}`;
@@ -119,8 +58,7 @@ for (const path of paths) {
 }
 
 // 키보드: 첫 Tab은 본문 바로가기, 모바일 메뉴는 열면 첫 링크로 포커스, Esc로 닫히면 메뉴 버튼으로 복귀
-await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 900, deviceScaleFactor: 1, mobile: true });
-await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
+await viewport(375, "light");
 await open(baseUrl + paths[0]);
 await key("Tab", "Tab", 9);
 const firstTab = await evaluate("document.activeElement.textContent.trim()");
@@ -149,5 +87,4 @@ console.log(JSON.stringify({ keyboard }, null, 2));
 console.table(report.map(({ path, theme, width, h1, horizontalScroll, overflowing, unnamedButtons, minContrast }) => ({
   path, theme, width, h1, horizontalScroll, overflow: overflowing.length, unnamedButtons, minContrast: minContrast.ratio,
 })));
-ws.close();
-chrome.kill();
+close();
