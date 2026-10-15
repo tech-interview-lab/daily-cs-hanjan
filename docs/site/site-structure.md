@@ -98,7 +98,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 |---|---|---|---|---|
 | DiscussionSource | application | fetchAll, fetchOne(number) | GitHub GraphQL 어댑터 | fixture 파일 어댑터 |
 | SearchIndex | application | build(questions), query(text) | 부분 문자열 일치 | 같은 구현(입출력 없음) |
-| WebhookVerifier | application | verify(body, signature) | HMAC-SHA256 서명 검증 어댑터 | 항상 통과 또는 항상 실패 구현 |
+| WebhookReceiver | application | receive(body, signature, eventName) | GitHub 웹훅 어댑터. HMAC-SHA256 서명 검증과 이벤트 해석(질문 번호 추출) | 결과를 고정해 돌려주는 구현 |
 | CacheInvalidator | application | invalidateQuestion(number), invalidateLists() | Next.js 캐시 태그 재검증(`main`) | 호출 기록 구현 |
 
 - 저장소 포트(ArchiveWriter, ArchiveReader)는 두지 않습니다. Vercel은 파일 저장소가 유지되지 않으므로 데이터 캐시가 저장소 역할을 합니다([ADR-0003](../adr/0003-tech-stack.md)).
@@ -114,13 +114,14 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | ListQuestionsByCategory | FR-1, SC-3 | DiscussionSource |
 | ListRecentQuestions | 홈 | DiscussionSource |
 | GetQuestionDetail | FR-1, SC-2 | DiscussionSource |
-| ListNewAnswers | FR-4 | DiscussionSource |
 | ListAnswersByAuthor | FR-2, SC-1 | DiscussionSource |
 | SearchQuestions | FR-3 | DiscussionSource, SearchIndex |
-| HandleDiscussionEvent | FR-4 | WebhookVerifier, CacheInvalidator |
+| HandleDiscussionEvent | FR-4 | WebhookReceiver, CacheInvalidator |
 
 - 마감 댓글 제외(C-1)와 카테고리 추출은 각 유스케이스가 도메인 정책(AutoClosePolicy, CategoryExtractor)으로 수행합니다.
-- ListNewAnswers는 질문 번호와 마지막으로 받은 답변 id를 받아 그 이후 답변만 돌려줍니다. 열린 화면의 15초 폴링이 사용합니다.
+- 열린 화면의 15초 폴링 API는 GetQuestionDetail 결과를 그대로 돌려주고, 새 답변 판별은 화면(클라이언트)에서 id 비교로 합니다. 질문당 답변이 수 건이라 별도 유스케이스를 두지 않았습니다(S2).
+- 웹훅 포트는 처음 설계의 WebhookVerifier(서명 검증만)에서 WebhookReceiver(검증과 해석)로 넓혔습니다. 해석까지 어댑터에 두어 GitHub 웹훅 필드명이 유스케이스로 새지 않게 했습니다(S2).
+- 답변 수는 최상위 댓글만 셉니다. 답글은 답변 카드 안에 표시하고 따로 셉니다(S2).
 
 ## 9. 폴더 구조
 
@@ -167,11 +168,11 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
    │  │  └─ policies/           # AutoClosePolicy, CategoryExtractor
    │  ├─ application/
    │  │  ├─ usecases/
-   │  │  └─ ports/              # DiscussionSource, SearchIndex, WebhookVerifier, CacheInvalidator
+   │  │  └─ ports/              # DiscussionSource, SearchIndex, WebhookReceiver, CacheInvalidator
    │  ├─ adapters/
    │  │  ├─ source/             # github-graphql, fixture
    │  │  ├─ search/             # substring
-   │  │  └─ webhook/            # hmac-verifier
+   │  │  └─ webhook/            # github-webhook-receiver
    │  ├─ presentation/
    │  │  ├─ controllers/
    │  │  ├─ presenters/
@@ -201,7 +202,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 |---|---|---|
 | 1 | `discussion_comment`, `discussion` 웹훅 수신 | app/api/webhooks/github → presentation/controllers |
 | 2 | HandleDiscussionEvent 호출 | application/usecases |
-| 3 | 서명 검증. 실패 시 401 | WebhookVerifier |
+| 3 | 서명 검증(실패 시 401)과 질문 번호 추출 | WebhookReceiver |
 | 4 | 해당 질문 태그와 목록 태그 재검증 | CacheInvalidator |
 | 5 | 다음 요청에서 해당 질문만 다시 조회 | main/container의 캐시 + DiscussionSource |
 
@@ -223,7 +224,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | 단계 | 동작 | 담당 |
 |---|---|---|
 | 1 | 15초마다 마지막 답변 id로 요청 | presentation/views의 클라이언트 컴포넌트 |
-| 2 | ListNewAnswers 호출 | app/api/questions → controllers → usecases |
+| 2 | GetQuestionDetail 호출 | app/api/questions → controllers → usecases |
 | 3 | 새 답변 ViewModel 반환 | presentation/presenters |
 | 4 | 답변 목록 끝에 추가해 그 영역만 다시 그림 | 클라이언트 컴포넌트 |
 
@@ -254,7 +255,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 |---|---|
 | S0 | 엔티티, 정책, DiscussionSource 포트, github-graphql과 fixture 어댑터, 본문 살균 |
 | S1 | ListCategories, ListQuestionsByCategory, ListRecentQuestions, 홈과 카테고리 화면, 공통 레이아웃, `main/container` 조립과 데이터 캐시 적용 |
-| S2 | GetQuestionDetail, ListNewAnswers, HandleDiscussionEvent, 웹훅과 폴링 API, 질문 상세 화면 |
+| S2 | GetQuestionDetail, HandleDiscussionEvent, 웹훅과 폴링 API, 질문 상세 화면 |
 | S3 | ListAnswersByAuthor, 작성자 화면 |
 | S4 | SearchQuestions, 검색 어댑터, 검색 화면 |
 
@@ -273,6 +274,4 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 
 | 항목 | 비고 |
 |---|---|
-| 대댓글 처리 | `site-spec.md`에 정의 없음. `ai-workflow.md` S2는 대댓글 수를 확인 항목으로 둠. SPEC 확정 후 `parentId` 유지 여부 결정 |
 | 식별자 표기 | 영문 식별자 사용 가정. 확정 필요 |
-| 댓글 수정 및 삭제 반영 | SPEC 8장과 연동. 반영하면 `discussion_comment`의 edited, deleted 이벤트도 같은 재검증 경로로 처리. 열린 화면의 폴링은 추가만 다룸 |

@@ -25,6 +25,8 @@ CS한잔 사이트. GitHub Discussions의 질문과 답변을 카테고리, 작�
 - 명령(`site/`에서 실행): `npm ci`, `npm run dev`, `npm run build`
 - 점검: `npm run check`(lockfile, 타입, 레이어 의존, 테스트). 실제 GitHub 대조는 `GITHUB_TOKEN=$(gh auth token) npm run test:live`
 - 화면 점검: 빌드 후 `next start`로 띄우고 `node scripts/visual-check.mjs <주소> <출력 폴더> <경로...>`(폭 4개 × 라이트/다크 캡처, 가로 넘침, 대비, 키보드)
+- 웹훅·폴링 E2E: `node scripts/e2e-webhook.mjs`, `node scripts/e2e-polling.mjs`(fixture로 빌드하므로 끝나면 실제 데이터로 다시 빌드)
+- 환경 변수: `GITHUB_TOKEN`(Discussions 읽기), `GITHUB_WEBHOOK_SECRET`(웹훅 서명), `HANJAN_FIXTURE_FILE`(로컬 fixture, 설정 시 GitHub 대신 사용)
 - 의존성을 바꾸면 `package-lock.json`에 플랫폼별 번들러 패키지가 남았는지 확인합니다(npm 선택 의존성 버그). 빠졌으면 `node_modules`와 lock을 지우고 `npm install`
 
 ## 폴더 구조
