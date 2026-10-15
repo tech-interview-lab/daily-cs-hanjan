@@ -70,6 +70,15 @@ describe("GitHubGraphqlSource", () => {
     expect(q2.answers.filter((a) => !isAutoCloseComment(a.body))).toHaveLength(3);
   });
 
+  it("작성자 아바타는 GitHub 이미지 서버의 https 주소만 남긴다", async () => {
+    const { source } = create();
+    const answers = (await source.fetchAll()).flatMap((i) => i.answers);
+    const byAuthor = (login: string | null) => answers.find((a) => a.author === login)?.authorAvatarUrl;
+    expect(byAuthor("lapera00")).toMatch(/^https:\/\/avatars\.githubusercontent\.com\//);
+    expect(byAuthor("rn1217")).toBeNull();
+    expect(byAuthor(null)).toBeNull();
+  });
+
   it("본문 HTML을 살균한다", async () => {
     const { source } = create();
     const html = (await source.fetchOne(2))!.answers[0]!.bodyHtml;

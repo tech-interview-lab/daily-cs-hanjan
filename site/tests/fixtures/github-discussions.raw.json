@@ -37,7 +37,8 @@
           "id": "C_2_1",
           "createdAt": "2026-10-01T01:00:00Z",
           "author": {
-            "login": "lapera00"
+            "login": "lapera00",
+            "avatarUrl": "https://avatars.githubusercontent.com/u/7449?s=96&v=4"
           },
           "body": "TCP는 연결 지향입니다.",
           "bodyText": "TCP는 연결 지향입니다.",
@@ -63,7 +64,8 @@
           "id": "C_2_3",
           "createdAt": "2026-10-01T03:00:00Z",
           "author": {
-            "login": "00kang"
+            "login": "00kang",
+            "avatarUrl": "https://avatars.githubusercontent.com/u/75361?s=96&v=4"
           },
           "body": "```js\nconst veryLongLine = 'a'.repeat(500);\n```\n| a | b |\n|---|---|\n| 1 | 2 |",
           "bodyText": "const veryLongLine",
@@ -77,7 +79,8 @@
           "id": "C_2_4",
           "createdAt": "2026-10-02T00:05:00Z",
           "author": {
-            "login": "YunDaeHyeon"
+            "login": "YunDaeHyeon",
+            "avatarUrl": "https://avatars.githubusercontent.com/u/22556?s=96&v=4"
           },
           "body": "🔒 다음 질문이 올라와서 이 토론은 마감되었습니다.\n늦게라도 답변 남기고 싶으시면 편하게 댓글 달아주세요 🐢",
           "bodyText": "🔒 다음 질문이 올라와서 이 토론은 마감되었습니다.",
@@ -128,7 +131,8 @@
           "id": "C_4_1",
           "createdAt": "2026-10-03T01:00:00Z",
           "author": {
-            "login": "rn1217"
+            "login": "rn1217",
+            "avatarUrl": "javascript:alert(1)"
           },
           "body": "동기는 순서대로 처리합니다.",
           "bodyText": "동기는 순서대로 처리합니다.",
@@ -140,7 +144,8 @@
                 "id": "R_4_1_1",
                 "createdAt": "2026-10-03T02:00:00Z",
                 "author": {
-                  "login": "ssun4098"
+                  "login": "ssun4098",
+                  "avatarUrl": "https://avatars.githubusercontent.com/u/9616?s=96&v=4"
                 },
                 "body": "비동기는요?",
                 "bodyText": "비동기는요?",
