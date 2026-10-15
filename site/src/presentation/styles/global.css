@@ -37,6 +37,8 @@
   --content-max: 720px;
   --content-max-wide: 1200px;
   --header-height: 3.5rem;
+  /* 화면 틀의 최대 폭. 넓은 화면에서 왼쪽에 치우치지 않도록 가운데에 둔다 */
+  --frame-max: calc(var(--content-max) + 2 * var(--page-gutter));
   --transition: 150ms ease-out;
 }
 
@@ -83,7 +85,10 @@
 }
 
 @media (min-width: 1024px) {
-  :root { --page-gutter: var(--space-8); }
+  :root {
+    --page-gutter: var(--space-8);
+    --frame-max: calc(var(--sidebar-width) + var(--space-8) + var(--content-max) + 2 * var(--page-gutter));
+  }
   html { font-size: 106.25%; }
 }
 
