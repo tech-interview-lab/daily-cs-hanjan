@@ -251,8 +251,8 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 
 | 슬라이스 | 관통하는 요소 |
 |---|---|
-| S0 | 엔티티, 정책, DiscussionSource 포트, github-graphql과 fixture 어댑터, 캐시 적용(`main/container`) |
-| S1 | ListCategories, ListQuestionsByCategory, 홈과 카테고리 화면 |
+| S0 | 엔티티, 정책, DiscussionSource 포트, github-graphql과 fixture 어댑터, 본문 살균 |
+| S1 | ListCategories, ListQuestionsByCategory, 홈과 카테고리 화면, `main/container` 조립과 데이터 캐시 적용(첫 화면이 생겨야 확인 가능) |
 | S2 | GetQuestionDetail, ListNewAnswers, HandleDiscussionEvent, 웹훅과 폴링 API, 질문 상세 화면 |
 | S3 | ListAnswersByAuthor, 작성자 화면 |
 | S4 | SearchQuestions, 검색 어댑터, 검색 화면 |
