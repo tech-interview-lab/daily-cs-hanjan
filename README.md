@@ -32,4 +32,4 @@
 - 서로 비교하지 않고, 비하하지 않기
 
 ---
-🛠 운영 구조가 궁금하다면: [아키텍처 문서](./docs/ARCHITECTURE.md)
+🛠 운영 구조가 궁금하다면: [아키텍처 문서](./docs/pipeline/pipeline-overview.md)
