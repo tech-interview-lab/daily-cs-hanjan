@@ -1,0 +1,52 @@
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-input);
+  background: transparent;
+  color: var(--color-fg);
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.iconButton:hover { background: var(--color-muted-bg); }
+
+.menuButton {
+  composes: iconButton;
+}
+
+@media (min-width: 1024px) {
+  .menuButton { display: none !important; }
+}
+
+.dialog {
+  width: min(320px, calc(100vw - 2rem));
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: var(--space-4);
+  border: 0;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-fg);
+  overflow-y: auto;
+}
+
+.dialog::backdrop { background: rgb(15 23 42 / 0.5); }
+
+.dialogHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.dialogTitle {
+  font-size: 1rem;
+  font-weight: 700;
+}
