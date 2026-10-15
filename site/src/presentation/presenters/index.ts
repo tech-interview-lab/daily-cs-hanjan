@@ -2,9 +2,19 @@ import type { CategorySummary } from "@/application/usecases/list-categories";
 import type { AnswerThread, QuestionDetail } from "@/application/usecases/get-question-detail";
 import type { CategoryQuestions } from "@/application/usecases/list-questions-by-category";
 import type { AuthorAnswers, AuthorSummary } from "@/application/usecases/list-authors";
+import type { SearchOutcome } from "@/application/usecases/search-questions";
 import type { QuestionSummary } from "@/application/usecases/question-summary";
 import type { Answer } from "@/domain/entities/answer";
-import type { AnswerVM, AuthorPageVM, CategoryPageVM, NavItemVM, QuestionDetailVM, QuestionItemVM, ThreadVM } from "../viewmodels";
+import type {
+  AnswerVM,
+  AuthorPageVM,
+  CategoryPageVM,
+  NavItemVM,
+  QuestionDetailVM,
+  QuestionItemVM,
+  SearchPageVM,
+  ThreadVM,
+} from "../viewmodels";
 
 const KST_DATE = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" });
 
@@ -123,6 +133,29 @@ export function presentAuthorPage(result: AuthorAnswers): AuthorPageVM {
       dateText: formatKstDateTime(answer.createdAt),
       dateTime: answer.createdAt,
       bodyHtml: answer.bodyHtml,
+    })),
+  };
+}
+
+export function presentSearch(outcome: SearchOutcome, categories: readonly NavItemVM[]): SearchPageVM {
+  const summary = outcome.query
+    ? outcome.results.length ? `"${outcome.query}" 검색 결과 질문 ${outcome.results.length}개` : null
+    : null;
+  return {
+    query: outcome.query,
+    summary,
+    categories,
+    results: outcome.results.map(({ question, hits }) => ({
+      number: question.number,
+      titleSegments: hits.find((hit) => hit.document.field === "question")?.excerpt ?? [{ text: question.text, match: false }],
+      href: questionHref(question.number),
+      categoryLabel: question.category,
+      categoryHref: categoryHref(question.categorySlug),
+      dateText: formatKstDate(question.createdAt),
+      dateTime: question.createdAt,
+      excerpts: hits
+        .filter((hit) => hit.document.field === "answer")
+        .map((hit) => ({ label: `답변 · ${hit.document.author ?? DELETED_AUTHOR_LABEL}`, segments: hit.excerpt })),
     })),
   };
 }

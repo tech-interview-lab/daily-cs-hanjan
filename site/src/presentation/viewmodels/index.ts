@@ -86,3 +86,26 @@ export type AuthorPageVM = {
   readonly profileUrl: string;
   readonly answers: readonly AuthorAnswerVM[];
 };
+
+export type SearchExcerptVM = {
+  readonly label: string;
+  readonly segments: readonly { readonly text: string; readonly match: boolean }[];
+};
+
+export type SearchResultVM = {
+  readonly number: number;
+  readonly titleSegments: readonly { readonly text: string; readonly match: boolean }[];
+  readonly href: string;
+  readonly categoryLabel: string;
+  readonly categoryHref: string;
+  readonly dateText: string;
+  readonly dateTime: string;
+  readonly excerpts: readonly SearchExcerptVM[];
+};
+
+export type SearchPageVM = {
+  readonly query: string;
+  readonly summary: string | null;
+  readonly results: readonly SearchResultVM[];
+  readonly categories: readonly NavItemVM[];
+};

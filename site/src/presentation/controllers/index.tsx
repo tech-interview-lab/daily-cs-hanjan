@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { after, connection } from "next/server";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import type { CacheInvalidator } from "@/application/ports/cache-invalidator";
 import type { DiscussionSource } from "@/application/ports/discussion-source";
+import type { SearchIndex } from "@/application/ports/search-index";
 import type { WebhookReceiver } from "@/application/ports/webhook-receiver";
+import { searchQuestions } from "@/application/usecases/search-questions";
 import { getQuestionDetail, listQuestionNumbers } from "@/application/usecases/get-question-detail";
 import { handleDiscussionEvent } from "@/application/usecases/handle-discussion-event";
 import { warmQuestionCache } from "@/application/usecases/warm-question-cache";
@@ -18,8 +20,10 @@ import {
   presentNavItems,
   presentQuestionDetail,
   presentQuestionItem,
+  presentSearch,
   presentThreads,
 } from "../presenters";
+import { SearchView } from "../views/SearchView";
 import { AuthorView } from "../views/AuthorView";
 import { CategoryView } from "../views/CategoryView";
 import { HomeView } from "../views/HomeView";
@@ -155,4 +159,23 @@ export async function authorStaticParams(deps: Deps) {
 export async function authorTitle(deps: Deps, login: string): Promise<string> {
   const result = await listAnswersByAuthor(deps.source, login);
   return result ? `${result.login}의 답변` : "페이지를 찾을 수 없습니다";
+}
+
+export type SearchDeps = Deps & { readonly index: SearchIndex };
+type SearchParams = Promise<{ q?: string | string[] }>;
+
+async function SearchContent({ deps, searchParams }: { readonly deps: SearchDeps; readonly searchParams: SearchParams }) {
+  const raw = (await searchParams).q;
+  const query = Array.isArray(raw) ? (raw[0] ?? "") : (raw ?? "");
+  const [outcome, categories] = await Promise.all([searchQuestions(deps, query), listCategories(deps.source)]);
+  return <SearchView vm={presentSearch(outcome, presentNavItems(categories))} />;
+}
+
+// 검색어는 요청마다 달라서(searchParams) 이 부분만 Suspense 안에서 그린다(Cache Components 규칙)
+export function renderSearch(deps: SearchDeps, searchParams: SearchParams) {
+  return (
+    <Suspense fallback={<SearchView vm={{ query: "", summary: null, results: [], categories: [] }} />}>
+      <SearchContent deps={deps} searchParams={searchParams} />
+    </Suspense>
+  );
 }
