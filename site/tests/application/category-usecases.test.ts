@@ -33,9 +33,9 @@ describe("listQuestionsByCategory", () => {
     expect(result?.questions[0]?.answerCount).toBe(3);
   });
 
-  it("대댓글도 답변 수에 포함한다", async () => {
+  it("답변 수는 최상위 댓글만 센다 (답글은 답변 카드 안에 표시)", async () => {
     const result = await listQuestionsByCategory(await createSampleSource(), "cs");
-    expect(result?.questions[0]?.answerCount).toBe(2);
+    expect(result?.questions[0]?.answerCount).toBe(1);
   });
 
   it("없는 slug는 null이다", async () => {

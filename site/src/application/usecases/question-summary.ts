@@ -22,7 +22,7 @@ export function summarize({ question, answers }: QuestionWithAnswers): QuestionS
     createdAt: question.createdAt,
     closed: question.closed,
     url: question.url,
-    answerCount: answers.filter((answer) => !isAutoCloseComment(answer.body)).length,
+    answerCount: answers.filter((answer) => answer.parentId === null && !isAutoCloseComment(answer.body)).length,
   };
 }
 
