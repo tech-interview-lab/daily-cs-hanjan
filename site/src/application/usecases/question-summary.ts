@@ -1,6 +1,6 @@
-import { isAutoCloseComment } from "@/domain/policies/auto-close-policy";
 import { toCategorySlug } from "@/domain/policies/category-slug";
 import type { QuestionWithAnswers } from "../ports/discussion-source";
+import { isCountedAnswer } from "./answer-rules";
 
 export type QuestionSummary = {
   readonly number: number;
@@ -22,7 +22,7 @@ export function summarize({ question, answers }: QuestionWithAnswers): QuestionS
     createdAt: question.createdAt,
     closed: question.closed,
     url: question.url,
-    answerCount: answers.filter((answer) => answer.parentId === null && !isAutoCloseComment(answer.body)).length,
+    answerCount: answers.filter(isCountedAnswer).length,
   };
 }
 
