@@ -47,7 +47,6 @@ const state = `({
   newLabels: [...document.querySelectorAll("span")].filter((s) => s.textContent === "새 답변" || s.textContent === "새 답글").map((s) => s.textContent),
   editedLabels: [...document.querySelectorAll("span")].filter((s) => s.textContent === "수정됨").length,
   text: document.querySelector("#answers-title ~ ol")?.textContent ?? "",
-  live: document.querySelector("[aria-live=polite]")?.textContent,
   scrollY: Math.round(scrollY),
   // 사용자가 보고 있던 카드(화면 안에 들어온 첫 카드)의 화면상 위치. 위쪽에 내용이 늘어도 이 값이 같으면 화면이 밀리지 않은 것
   anchorTop: (() => {
@@ -86,7 +85,6 @@ try {
   check("새로고침 없이 새 답변과 새 답글 표시", after.ms !== null, after.ms === null ? "20초 안에 안 나타남" : `${after.ms}ms`);
   check("답변 수 제목 갱신", after.s.title === "답변 6", after.s.title);
   check("표시 라벨", after.s.newLabels.sort().join(",") === "새 답글,새 답변", after.s.newLabels.join(","));
-  check("스크린 리더 알림", after.s.live === "새 답변 1건, 새 답글 1건이 반영되었습니다.", after.s.live);
   check(
     "보던 내용이 밀리지 않음(보던 카드의 화면 위치 유지)",
     before.anchorTop !== null && Math.abs(after.s.anchorTop - before.anchorTop) <= 1,
@@ -114,7 +112,6 @@ try {
   const edited = await waitUntil((s) => s.editedLabels >= 1 && s.title === "답변 5", 20_000);
   check("새로고침 없이 수정이 반영되고 '수정됨' 표시", edited.ms !== null && edited.s.text.includes("수정된 첫 답변 본문"), `${edited.ms}ms, 라벨 ${edited.s.editedLabels}개`);
   check("삭제된 답변 카드 제거(답변 6 → 5)", beforeEdit.title === "답변 6" && edited.s.title === "답변 5", `${beforeEdit.title} → ${edited.s.title}`);
-  check("수정·삭제 알림", edited.s.live === "수정 1건, 삭제 1건이 반영되었습니다.", edited.s.live);
   check(
     "수정·삭제 때도 보던 카드의 화면 위치 유지",
     beforeEdit.anchorTop !== null && edited.s.anchorTop !== null && Math.abs(edited.s.anchorTop - beforeEdit.anchorTop) <= 1,

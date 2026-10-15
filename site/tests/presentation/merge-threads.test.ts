@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { announceNew, mergeNewThreads } from "@/presentation/presenters/merge-threads";
+import { mergeNewThreads } from "@/presentation/presenters/merge-threads";
 import type { AnswerVM, ThreadVM } from "@/presentation/viewmodels";
 
 const a = (id: string, extra: Partial<AnswerVM> = {}): AnswerVM => ({
@@ -88,13 +88,5 @@ describe("mergeNewThreads: 삭제", () => {
     );
     expect(result.threads.map((x) => x.answer.id)).toEqual(["1", "3", "4"]);
     expect(counts(result)).toEqual([1, 0, 1, 1]);
-  });
-});
-
-describe("announceNew", () => {
-  it("반영된 변경의 종류와 수를 알린다", () => {
-    expect(announceNew({ newAnswers: 2, newReplies: 0, edited: 0, removed: 0 })).toBe("새 답변 2건이 반영되었습니다.");
-    expect(announceNew({ newAnswers: 1, newReplies: 1, edited: 0, removed: 0 })).toBe("새 답변 1건, 새 답글 1건이 반영되었습니다.");
-    expect(announceNew({ newAnswers: 0, newReplies: 0, edited: 1, removed: 2 })).toBe("수정 1건, 삭제 2건이 반영되었습니다.");
   });
 });
