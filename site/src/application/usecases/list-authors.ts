@@ -6,7 +6,6 @@ import { isCountedAnswer } from "./answer-rules";
 export type AuthorSummary = {
   readonly login: string;
   readonly avatarUrl: string | null;
-  readonly answerCount: number;
 };
 
 export type AuthorAnswer = {
@@ -25,22 +24,18 @@ export type AuthorAnswers = {
   readonly answers: readonly AuthorAnswer[];
 };
 
+// 한 번이라도 답변한 사람의 목록. 경쟁으로 읽히지 않도록 답변 수는 세지 않고 이름순으로 둔다.
 // 작성자가 없는 답변(탈퇴한 계정)은 작성자 목록과 작성자 페이지에 들어가지 않는다
 export async function listAuthors(source: DiscussionSource): Promise<AuthorSummary[]> {
-  const authors = new Map<string, { avatarUrl: string | null; answerCount: number }>();
+  const avatars = new Map<string, string | null>();
   for (const { answers } of await source.fetchAll()) {
     for (const answer of answers.filter(isCountedAnswer)) {
-      if (!answer.author) continue;
-      const current = authors.get(answer.author);
-      authors.set(answer.author, {
-        avatarUrl: current?.avatarUrl ?? answer.authorAvatarUrl,
-        answerCount: (current?.answerCount ?? 0) + 1,
-      });
+      if (answer.author && !avatars.get(answer.author)) avatars.set(answer.author, answer.authorAvatarUrl);
     }
   }
-  return [...authors]
-    .map(([login, info]) => ({ login, ...info }))
-    .sort((a, b) => b.answerCount - a.answerCount || a.login.localeCompare(b.login));
+  return [...avatars]
+    .map(([login, avatarUrl]) => ({ login, avatarUrl }))
+    .sort((a, b) => a.login.localeCompare(b.login, "en", { sensitivity: "base" }));
 }
 
 export async function listAnswersByAuthor(source: DiscussionSource, login: string): Promise<AuthorAnswers | null> {

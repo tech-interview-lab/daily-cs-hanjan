@@ -1,8 +1,8 @@
 export type NavItemVM = {
   readonly label: string;
   readonly href: string;
-  readonly countText: string;
-  readonly countLabel: string;
+  readonly countText?: string;
+  readonly countLabel?: string;
   readonly avatarUrl?: string | null;
 };
 
@@ -82,7 +82,6 @@ export type AuthorAnswerVM = {
 export type AuthorPageVM = {
   readonly login: string;
   readonly avatarUrl: string | null;
-  readonly countText: string;
   readonly profileUrl: string;
   readonly answers: readonly AuthorAnswerVM[];
 };
