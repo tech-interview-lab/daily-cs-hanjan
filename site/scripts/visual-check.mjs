@@ -33,7 +33,7 @@ const PAGE_CHECKS = `(() => {
   const unnamedButtons = [...document.querySelectorAll("button, a")].filter(el => visible(el) && !(el.getAttribute("aria-label") || el.textContent.trim())).length;
   return {
     title: document.title,
-    h1: document.querySelectorAll("h1").length,
+    h1: [...document.querySelectorAll("h1")].filter(visible).length,
     horizontalScroll: document.documentElement.scrollWidth > vw,
     overflowing,
     unnamedButtons,
