@@ -7,6 +7,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { launchChrome, sleep, waitForServer } from "./lib/cdp.mjs";
 
+const SHOT_DIR = process.env.SHOT_DIR; // 설정하면 변경이 반영된 순간의 화면을 저장한다
+
 const PORT = 3126;
 const BASE = `http://localhost:${PORT}`;
 const SECRET = "e2e-secret";
@@ -91,6 +93,12 @@ try {
     `카드 위치 ${before.anchorTop} → ${after.s.anchorTop}px, scrollY ${before.scrollY} → ${after.s.scrollY}`,
   );
 
+  async function shot(name) {
+    if (!SHOT_DIR) return;
+    const { data } = await browser.send("Page.captureScreenshot", { format: "png" });
+    writeFileSync(join(SHOT_DIR, `${name}.png`), Buffer.from(data, "base64"));
+  }
+
   // 1-2. 같은 화면에서 수정과 삭제가 새로고침 없이 반영되는지
   // 화면 위쪽(이미 지나간 카드)의 수정·삭제가 보던 카드를 밀지 않는지 보려고, 맨 아래 카드를 보는 중으로 맞춘다
   await browser.evaluate("(() => { const el = document.getElementById('answer-E5'); el.scrollIntoView(); scrollBy(0, -120); window.__anchorId = 'answer-E5'; return true; })()");
@@ -112,6 +120,10 @@ try {
     beforeEdit.anchorTop !== null && edited.s.anchorTop !== null && Math.abs(edited.s.anchorTop - beforeEdit.anchorTop) <= 1,
     `카드 위치 ${beforeEdit.anchorTop} → ${edited.s.anchorTop}px`,
   );
+
+  await browser.evaluate("document.querySelector('#answers-title').scrollIntoView(), true");
+  await sleep(200);
+  await shot("polling-2-edited-deleted-375");
 
   // 2. 넓은 화면에서 답변 1개 → 2개가 되면 2열
   await browser.viewport(1440);
