@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
-import { connection } from "next/server";
+import { after, connection } from "next/server";
 import type { ReactNode } from "react";
 import type { CacheInvalidator } from "@/application/ports/cache-invalidator";
 import type { DiscussionSource } from "@/application/ports/discussion-source";
 import type { WebhookReceiver } from "@/application/ports/webhook-receiver";
 import { getQuestionDetail, listQuestionNumbers } from "@/application/usecases/get-question-detail";
 import { handleDiscussionEvent } from "@/application/usecases/handle-discussion-event";
+import { warmQuestionCache } from "@/application/usecases/warm-question-cache";
 import { listCategories } from "@/application/usecases/list-categories";
 import { listQuestionsByCategory } from "@/application/usecases/list-questions-by-category";
 import { listRecentQuestions } from "@/application/usecases/list-recent-questions";
@@ -91,7 +92,11 @@ export async function answersResponse(deps: Deps, param: string): Promise<Respon
   return Response.json(presentThreads(detail.threads), { headers: NO_STORE });
 }
 
-export type WebhookDeps = { readonly receiver: WebhookReceiver | null; readonly invalidator: CacheInvalidator };
+export type WebhookDeps = {
+  readonly receiver: WebhookReceiver | null;
+  readonly invalidator: CacheInvalidator;
+  readonly source: DiscussionSource;
+};
 
 export async function webhookResponse(deps: WebhookDeps, request: Request): Promise<Response> {
   if (!deps.receiver) {
@@ -114,6 +119,15 @@ export async function webhookResponse(deps: WebhookDeps, request: Request): Prom
     case "ignored":
       return Response.json({ ignored: result.reason }, { status: 202 });
     case "discussion-changed":
+      // 응답을 먼저 돌려주고, 다음 방문자가 GitHub 조회를 기다리지 않도록 캐시를 미리 채운다
+      after(async () => {
+        try {
+          const outcome = await warmQuestionCache({ source: deps.source, invalidator: deps.invalidator }, result);
+          if (outcome !== "warmed") console.warn(`질문 ${result.questionNumber}: GitHub 조회에 변경이 아직 반영되지 않아 캐시를 비운 채 두었습니다.`);
+        } catch (error) {
+          console.error(`질문 ${result.questionNumber} 캐시 미리 채우기 실패`, error);
+        }
+      });
       return Response.json({ revalidated: result.questionNumber });
   }
 }

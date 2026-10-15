@@ -15,6 +15,7 @@ export type Container = { readonly source: DiscussionSource };
 export type WebhookContainer = {
   readonly receiver: WebhookReceiver | null;
   readonly invalidator: CacheInvalidator;
+  readonly source: DiscussionSource;
 };
 
 export function getContainer(): Container {
@@ -23,5 +24,5 @@ export function getContainer(): Container {
 
 export function getWebhookContainer(): WebhookContainer {
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
-  return { receiver: secret ? new GitHubWebhookReceiver(secret) : null, invalidator: nextCacheInvalidator };
+  return { receiver: secret ? new GitHubWebhookReceiver(secret) : null, invalidator: nextCacheInvalidator, source: cachedSource };
 }
