@@ -101,6 +101,17 @@ describe("GitHubGraphqlSource", () => {
     await expect(source.fetchOne(2)).rejects.toThrow(/전체 4건/);
   });
 
+  it("목록 조회에서 NOT_FOUND가 오면 숨기지 않고 실패한다", async () => {
+    const source = new GitHubGraphqlSource({
+      token: "t", owner: "o", repo: "r",
+      fetchImpl: (async () =>
+        new Response(JSON.stringify({ data: { repository: null }, errors: [{ type: "NOT_FOUND", message: "Could not resolve to a Repository" }] }), {
+          status: 200,
+        })) as unknown as typeof fetch,
+    });
+    await expect(source.fetchAll()).rejects.toThrow(/Could not resolve/);
+  });
+
   it("HTTP 오류와 GraphQL 오류에서 실패하고 토큰을 메시지에 넣지 않는다", async () => {
     const http = new GitHubGraphqlSource({
       token: "secret-token", owner: "o", repo: "r",

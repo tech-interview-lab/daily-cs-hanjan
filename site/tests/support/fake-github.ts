@@ -50,6 +50,11 @@ export function createFakeGitHub(raw: Json[], options: FakeGitHubOptions = {}): 
       calls.push("one");
       const found = raw.find((d) => d.number === variables.number);
       data = { repository: { discussion: found ? withCommentPage(found, 0, firstPageComments) : null } };
+      if (!found) {
+        // 실제 GitHub는 없는 번호에 data와 함께 NOT_FOUND 오류를 보낸다
+        const errors = [{ type: "NOT_FOUND", path: ["repository", "discussion"], message: `Could not resolve to a Discussion with the number of ${variables.number}.` }];
+        return new Response(JSON.stringify({ data, errors }), { status: 200 });
+      }
     } else if (query.includes("MoreComments")) {
       calls.push("more");
       const found = raw.find((d) => d.id === variables.id);
