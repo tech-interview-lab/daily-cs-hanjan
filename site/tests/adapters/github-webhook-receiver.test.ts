@@ -9,13 +9,15 @@ const commentEvent = JSON.stringify({ action: "created", discussion: { number: 3
 describe("GitHubWebhookReceiver", () => {
   it("올바른 서명의 댓글 이벤트에서 질문 번호를 꺼낸다", () => {
     expect(receiver.receive(commentEvent, sign(SECRET, commentEvent), "discussion_comment")).toEqual({
-      kind: "discussion-changed", questionNumber: 34,
+      kind: "discussion-changed", questionNumber: 34, expectation: null,
     });
   });
 
   it("글 이벤트(생성, 마감, 수정, 삭제)도 같은 방식으로 처리한다", () => {
     const body = JSON.stringify({ action: "closed", discussion: { number: 33 } });
-    expect(receiver.receive(body, sign(SECRET, body), "discussion")).toEqual({ kind: "discussion-changed", questionNumber: 33 });
+    expect(receiver.receive(body, sign(SECRET, body), "discussion")).toEqual({
+      kind: "discussion-changed", questionNumber: 33, expectation: null,
+    });
   });
 
   it("서명이 없거나 틀리면 거부한다", () => {
@@ -48,4 +50,38 @@ describe("GitHubWebhookReceiver", () => {
   it("비밀값이 비어 있으면 만들 수 없다", () => {
     expect(() => new GitHubWebhookReceiver("")).toThrow();
   });
+
+  describe("변경 확인 기준(expectation)", () => {
+    const receive = (event: string, payload: object) => {
+      const body = JSON.stringify(payload);
+      return receiver.receive(body, sign(SECRET, body), event);
+    };
+    const expectationOf = (result: ReturnType<typeof receive>) => (result.kind === "discussion-changed" ? result.expectation : "해당 없음");
+
+    it("댓글 생성은 그 댓글이 보여야 한다", () => {
+      expect(expectationOf(receive("discussion_comment", { action: "created", discussion: { number: 34 }, comment: { node_id: "DC_1", body: "x" } })))
+        .toEqual({ type: "comment-present", commentId: "DC_1" });
+    });
+
+    it("댓글 삭제는 그 댓글이 없어야 한다", () => {
+      expect(expectationOf(receive("discussion_comment", { action: "deleted", discussion: { number: 34 }, comment: { node_id: "DC_1", body: "x" } })))
+        .toEqual({ type: "comment-absent", commentId: "DC_1" });
+    });
+
+    it("댓글 수정은 본문이 같아야 한다", () => {
+      expect(expectationOf(receive("discussion_comment", { action: "edited", discussion: { number: 34 }, comment: { node_id: "DC_1", body: "수정본" } })))
+        .toEqual({ type: "comment-body", commentId: "DC_1", body: "수정본" });
+    });
+
+    it("질문 글 생성과 삭제는 존재 여부를 확인한다", () => {
+      expect(expectationOf(receive("discussion", { action: "created", discussion: { number: 35 } }))).toEqual({ type: "question-present" });
+      expect(expectationOf(receive("discussion", { action: "deleted", discussion: { number: 35 } }))).toEqual({ type: "question-absent" });
+    });
+
+    it("확인할 기준이 없으면 null이다(마감, 댓글 ID 없음)", () => {
+      expect(expectationOf(receive("discussion", { action: "closed", discussion: { number: 35 } }))).toBeNull();
+      expect(expectationOf(receive("discussion_comment", { action: "created", discussion: { number: 34 }, comment: { body: "x" } }))).toBeNull();
+    });
+  });
 });
+

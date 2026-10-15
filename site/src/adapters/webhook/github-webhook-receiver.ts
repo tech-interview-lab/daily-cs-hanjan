@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import type { WebhookReceiver, WebhookResult } from "@/application/ports/webhook-receiver";
+import type { Expectation, WebhookReceiver, WebhookResult } from "@/application/ports/webhook-receiver";
 
 const DISCUSSION_EVENTS = new Set(["discussion", "discussion_comment"]);
 
@@ -13,9 +13,14 @@ export class GitHubWebhookReceiver implements WebhookReceiver {
     if (eventName === "ping") return { kind: "ping" };
     if (!eventName || !DISCUSSION_EVENTS.has(eventName)) return { kind: "ignored", reason: `처리하지 않는 이벤트: ${eventName}` };
 
-    const number = parseDiscussionNumber(body);
-    if (number === null) return { kind: "ignored", reason: "discussion.number가 없습니다." };
-    return { kind: "discussion-changed", questionNumber: number };
+    const payload = parsePayload(body);
+    const number = payload?.discussion?.number;
+    if (!Number.isInteger(number)) return { kind: "ignored", reason: "discussion.number가 없습니다." };
+    return {
+      kind: "discussion-changed",
+      questionNumber: number as number,
+      expectation: toExpectation(eventName, payload),
+    };
   }
 
   private isValid(body: string, signature: string | null): boolean {
@@ -26,11 +31,34 @@ export class GitHubWebhookReceiver implements WebhookReceiver {
   }
 }
 
-function parseDiscussionNumber(body: string): number | null {
+type Payload = {
+  action?: unknown;
+  discussion?: { number?: unknown };
+  comment?: { node_id?: unknown; body?: unknown };
+};
+
+function parsePayload(body: string): Payload | null {
   try {
-    const number = (JSON.parse(body) as { discussion?: { number?: unknown } }).discussion?.number;
-    return Number.isInteger(number) ? (number as number) : null;
+    return JSON.parse(body) as Payload;
   } catch {
     return null;
   }
+}
+
+// 웹훅이 알려 준 변경이 GitHub 조회에도 이미 반영됐는지 판단할 기준. 알 수 없으면 null(확인 없이 진행)
+function toExpectation(eventName: string, payload: Payload | null): Expectation | null {
+  const action = payload?.action;
+  if (eventName === "discussion") {
+    if (action === "created") return { type: "question-present" };
+    if (action === "deleted") return { type: "question-absent" };
+    return null;
+  }
+  const commentId = payload?.comment?.node_id;
+  if (typeof commentId !== "string" || !commentId) return null;
+  if (action === "created") return { type: "comment-present", commentId };
+  if (action === "deleted") return { type: "comment-absent", commentId };
+  if (action === "edited" && typeof payload?.comment?.body === "string") {
+    return { type: "comment-body", commentId, body: payload.comment.body };
+  }
+  return null;
 }
