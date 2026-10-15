@@ -35,10 +35,12 @@ export function RootShell({ vm, children }: { readonly vm: ShellVM; readonly chi
           </main>
         </div>
         <footer className={styles.footer}>
-          <ul className={styles.footerLinks}>
-            <li><a href={vm.discussionsUrl}>원본 Discussions</a></li>
-            <li><a href={vm.repositoryUrl}>저장소</a></li>
-          </ul>
+          <div className={styles.footerInner}>
+            <ul className={styles.footerLinks}>
+              <li><a href={vm.discussionsUrl}>원본 Discussions</a></li>
+              <li><a href={vm.repositoryUrl}>저장소</a></li>
+            </ul>
+          </div>
         </footer>
       </body>
     </html>
