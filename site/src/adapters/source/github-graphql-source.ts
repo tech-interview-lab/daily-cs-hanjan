@@ -1,7 +1,7 @@
 import type { Answer } from "@/domain/entities/answer";
 import type { Question } from "@/domain/entities/question";
 import { extractCategory } from "@/domain/policies/category-extractor";
-import { extractQuestionText } from "@/domain/policies/question-text";
+import { extractQuestionNote, extractQuestionText } from "@/domain/policies/question-text";
 import type { DiscussionSource, QuestionWithAnswers } from "@/application/ports/discussion-source";
 import { sanitizeBodyHtml } from "./sanitize";
 
@@ -122,6 +122,7 @@ export class GitHubGraphqlSource implements DiscussionSource {
       number: raw.number,
       title: raw.title,
       text: extractQuestionText(raw.body) ?? raw.title,
+      note: extractQuestionNote(raw.body),
       category,
       createdAt: raw.createdAt,
       closed: raw.closed,
