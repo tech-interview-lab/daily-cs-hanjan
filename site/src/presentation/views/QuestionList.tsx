@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { QuestionItemVM } from "../viewmodels";
 import styles from "./question.module.css";
 
@@ -13,10 +14,7 @@ export function QuestionList({ items }: { readonly items: readonly QuestionItemV
             <span className={styles.status} data-open={item.statusLabel === "진행 중" ? "" : undefined}>{item.statusLabel}</span>
           </div>
           <h3 className={styles.title}>
-            <a href={item.href}>
-              {item.text}
-              <span className="visually-hidden"> (GitHub Discussions에서 열림)</span>
-            </a>
+            <Link href={item.href}>{item.text}</Link>
           </h3>
           <p className={styles.answers}>{item.answerCountText}</p>
         </li>

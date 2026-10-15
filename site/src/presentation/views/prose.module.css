@@ -1,0 +1,53 @@
+/* 살균된 GitHub bodyHTML 출력 영역. 의미 요소에만 스타일을 준다(ADR-0003 위험 항목) */
+.prose { overflow-wrap: anywhere; }
+.prose > :first-child { margin-top: 0; }
+.prose > :last-child { margin-bottom: 0; }
+.prose :global(:where(p, ul, ol, pre, blockquote, table, details, hr)) { margin: 0.75em 0; }
+.prose :global(:where(h1, h2, h3, h4, h5, h6)) { margin: 1em 0 0.5em; font-size: 1.0625rem; font-weight: 700; }
+.prose :global(:where(ul, ol)) { padding-left: 1.5em; }
+.prose :global(li + li) { margin-top: 0.25em; }
+
+.prose :global(code) {
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-badge);
+  background: var(--color-code-bg);
+  font-size: 0.875em;
+}
+
+.prose :global(pre) {
+  overflow-x: auto;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  background: var(--color-code-bg);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.prose :global(pre code) { padding: 0; background: none; font-size: inherit; }
+
+.prose :global(table) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  word-break: normal;
+}
+
+.prose :global(:where(th, td)) {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.prose :global(img) { max-inline-size: 100%; height: auto; }
+
+.prose :global(blockquote) {
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--color-border);
+  color: var(--color-fg-muted);
+}
+
+.prose :global(hr) { border: 0; border-top: 1px solid var(--color-border); }

@@ -33,3 +33,32 @@ export type CategoryPageVM = {
   readonly countText: string;
   readonly questions: readonly QuestionItemVM[];
 };
+
+export type AnswerVM = {
+  readonly id: string;
+  readonly authorLabel: string;
+  readonly authorDeleted: boolean;
+  readonly dateText: string;
+  readonly dateTime: string;
+  readonly bodyHtml: string;
+  readonly isNew?: boolean;
+};
+
+export type ThreadVM = {
+  readonly answer: AnswerVM;
+  readonly replies: readonly AnswerVM[];
+};
+
+export type QuestionDetailVM = {
+  readonly number: number;
+  readonly text: string;
+  readonly note: string | null;
+  readonly categoryLabel: string;
+  readonly categoryHref: string;
+  readonly dateText: string;
+  readonly dateTime: string;
+  readonly statusLabel: "마감" | "진행 중";
+  readonly discussionUrl: string;
+  readonly pollUrl: string;
+  readonly threads: readonly ThreadVM[];
+};
