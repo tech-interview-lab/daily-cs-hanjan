@@ -12,6 +12,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:live": "vitest run -c vitest.live.config.ts --disableConsoleIntercept",
     "deps": "depcruise src --config .dependency-cruiser.cjs",
     "check": "npm run typecheck && npm run deps && npm run test"
   },
