@@ -1,0 +1,144 @@
+.header {
+  max-width: var(--content-max);
+  margin-bottom: var(--space-8);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-3);
+  font-size: 0.875rem;
+  color: var(--color-fg-muted);
+}
+
+.title {
+  font-size: 1.375rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+@media (min-width: 1024px) {
+  .title { font-size: 1.5rem; }
+}
+
+.note {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-border);
+  color: var(--color-fg-muted);
+}
+
+.noteLabel {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-badge-fg);
+}
+
+.source { margin-top: var(--space-4); font-size: 0.9375rem; }
+
+.answersTitle { margin-bottom: var(--space-4); }
+
+.threads {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .threads { gap: var(--space-6); }
+}
+
+/* 2열 기준 1440px 근거: docs/site/site-design.md 3장. 같은 행의 카드는 긴 쪽 높이에 맞춰 늘어난다 */
+@media (min-width: 1440px) {
+  .threads[data-columns="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .threads[data-columns="1"] { max-width: var(--content-max); }
+}
+
+.card {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+@media (min-width: 768px) {
+  .card { padding: var(--space-6); }
+}
+
+.cardHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.author { font-size: 1.0625rem; font-weight: 600; }
+.author[data-deleted] { color: var(--color-fg-muted); font-weight: 500; }
+
+.time { font-size: 0.875rem; color: var(--color-fg-muted); }
+
+.newLabel {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-link);
+  border-radius: var(--radius-badge);
+  color: var(--color-link);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.replies {
+  margin-top: var(--space-4);
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-border);
+}
+
+.repliesTitle {
+  margin-bottom: var(--space-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-fg-muted);
+}
+
+.replyList {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.replyHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+.replyAuthor { font-weight: 600; }
+.replyAuthor[data-deleted] { color: var(--color-fg-muted); font-weight: 500; }
+
+.empty {
+  padding: var(--space-6);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-card);
+  color: var(--color-fg-muted);
+}
+
+.error {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+}

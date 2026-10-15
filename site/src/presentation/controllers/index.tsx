@@ -1,13 +1,19 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import type { ReactNode } from "react";
+import type { CacheInvalidator } from "@/application/ports/cache-invalidator";
 import type { DiscussionSource } from "@/application/ports/discussion-source";
+import type { WebhookReceiver } from "@/application/ports/webhook-receiver";
+import { getQuestionDetail, listQuestionNumbers } from "@/application/usecases/get-question-detail";
+import { handleDiscussionEvent } from "@/application/usecases/handle-discussion-event";
 import { listCategories } from "@/application/usecases/list-categories";
 import { listQuestionsByCategory } from "@/application/usecases/list-questions-by-category";
 import { listRecentQuestions } from "@/application/usecases/list-recent-questions";
-import { presentCategoryPage, presentNavItems, presentQuestionItem } from "../presenters";
+import { presentCategoryPage, presentNavItems, presentQuestionDetail, presentQuestionItem, presentThreads } from "../presenters";
 import { CategoryView } from "../views/CategoryView";
 import { HomeView } from "../views/HomeView";
 import { NotFoundView } from "../views/NotFoundView";
+import { QuestionDetailView } from "../views/QuestionDetailView";
 import { RootShell } from "../views/RootShell";
 
 export type Deps = { readonly source: DiscussionSource };
@@ -51,4 +57,63 @@ export async function categoryTitle(deps: Deps, slug: string): Promise<string> {
 
 export function renderNotFound() {
   return <NotFoundView />;
+}
+
+function parseQuestionNumber(param: string): number | null {
+  return /^[1-9]\d{0,8}$/.test(param) ? Number(param) : null;
+}
+
+export async function renderQuestion(deps: Deps, param: string) {
+  const number = parseQuestionNumber(param);
+  const detail = number === null ? null : await getQuestionDetail(deps.source, number);
+  if (!detail) notFound();
+  return <QuestionDetailView vm={presentQuestionDetail(detail)} />;
+}
+
+export async function questionStaticParams(deps: Deps) {
+  return (await listQuestionNumbers(deps.source)).map((number) => ({ number: String(number) }));
+}
+
+export async function questionTitle(deps: Deps, param: string): Promise<string> {
+  const number = parseQuestionNumber(param);
+  const detail = number === null ? null : await getQuestionDetail(deps.source, number);
+  if (!detail) return "페이지를 찾을 수 없습니다";
+  return detail.text.length > 40 ? `${detail.text.slice(0, 40)}…` : detail.text;
+}
+
+const NO_STORE = { "Cache-Control": "no-store" };
+
+export async function answersResponse(deps: Deps, param: string): Promise<Response> {
+  await connection();
+  const number = parseQuestionNumber(param);
+  const detail = number === null ? null : await getQuestionDetail(deps.source, number);
+  if (!detail) return Response.json({ error: "not found" }, { status: 404, headers: NO_STORE });
+  return Response.json(presentThreads(detail.threads), { headers: NO_STORE });
+}
+
+export type WebhookDeps = { readonly receiver: WebhookReceiver | null; readonly invalidator: CacheInvalidator };
+
+export async function webhookResponse(deps: WebhookDeps, request: Request): Promise<Response> {
+  if (!deps.receiver) {
+    console.error("GITHUB_WEBHOOK_SECRET이 설정되지 않아 웹훅을 처리할 수 없습니다.");
+    return Response.json({ error: "webhook not configured" }, { status: 500 });
+  }
+  const result = handleDiscussionEvent(
+    { receiver: deps.receiver, invalidator: deps.invalidator },
+    {
+      body: await request.text(),
+      signature: request.headers.get("x-hub-signature-256"),
+      eventName: request.headers.get("x-github-event"),
+    },
+  );
+  switch (result.kind) {
+    case "invalid-signature":
+      return Response.json({ error: "invalid signature" }, { status: 401 });
+    case "ping":
+      return Response.json({ ok: true });
+    case "ignored":
+      return Response.json({ ignored: result.reason }, { status: 202 });
+    case "discussion-changed":
+      return Response.json({ revalidated: result.questionNumber });
+  }
 }

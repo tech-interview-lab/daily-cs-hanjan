@@ -50,6 +50,11 @@
   max-width: var(--content-max);
 }
 
+/* 질문 상세는 1440px 이상에서 답변 2열을 위해 넓게 쓴다 */
+@media (min-width: 1440px) {
+  .main:has([data-wide]) { max-width: var(--content-max-wide); }
+}
+
 @media (min-width: 1024px) {
   .layout {
     display: grid;
