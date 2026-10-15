@@ -108,7 +108,9 @@ export class GitHubGraphqlSource implements DiscussionSource {
   }
 
   async fetchOne(number: number): Promise<QuestionWithAnswers | null> {
-    const data: { repository: { discussion: RawDiscussion | null } } = await this.request(ONE_QUERY, { number });
+    const data: { repository: { discussion: RawDiscussion | null } } = await this.request(ONE_QUERY, { number }, {
+      allowNotFound: true,
+    });
     const raw = data.repository.discussion;
     return raw ? this.toQuestionWithAnswers(raw) : null;
   }
@@ -148,7 +150,7 @@ export class GitHubGraphqlSource implements DiscussionSource {
     return comments;
   }
 
-  private async request<T>(query: string, variables: Record<string, unknown>): Promise<T> {
+  private async request<T>(query: string, variables: Record<string, unknown>, options: { allowNotFound?: boolean } = {}): Promise<T> {
     const response = await this.fetchImpl(ENDPOINT, {
       method: "POST",
       headers: {
@@ -162,8 +164,9 @@ export class GitHubGraphqlSource implements DiscussionSource {
       }),
     });
     if (!response.ok) throw new Error(`GitHub GraphQL 요청 실패: HTTP ${response.status}`);
-    const json = (await response.json()) as { data?: T; errors?: { message: string }[] };
-    if (json.errors?.length) {
+    const json = (await response.json()) as { data?: T; errors?: { message: string; type?: string }[] };
+    const onlyNotFound = json.errors?.every((error) => error.type === "NOT_FOUND") ?? false;
+    if (json.errors?.length && !(options.allowNotFound && onlyNotFound)) {
       throw new Error(`GitHub GraphQL 오류: ${json.errors.map((e) => e.message).join("; ")}`);
     }
     if (!json.data) throw new Error("GitHub GraphQL 응답에 data가 없습니다.");
