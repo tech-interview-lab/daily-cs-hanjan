@@ -58,6 +58,12 @@ export async function launchChrome(port = 9333) {
     await send("Page.navigate", { url });
     await loaded;
     await evaluate("document.fonts.ready.then(() => true)");
+    // 스트리밍(Suspense)으로 늦게 온 내용은 숨겨진 상자에 있다가 교체된다. 교체가 끝날 때까지 기다린다(최대 3초)
+    await evaluate(`new Promise((resolve) => {
+      const start = Date.now();
+      const tick = () => (!document.querySelector('div[hidden][id^="S:"]') || Date.now() - start > 3000) ? resolve(true) : setTimeout(tick, 50);
+      tick();
+    })`);
     await sleep(150);
   };
   const viewport = (width, theme = "light", height = 900) => Promise.all([
