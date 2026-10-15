@@ -7,6 +7,12 @@
       "skillPath": "skills/better-interface/SKILL.md",
       "computedHash": "9c73b05d59b188147335eb71308ec7f37237272202fe2298f54c322e6c318b3f"
     },
+    "humanize-korean": {
+      "source": "epoko77-ai/im-not-ai",
+      "sourceType": "github",
+      "skillPath": "skills/humanize-korean/SKILL.md",
+      "computedHash": "0ab7cb6130ec2152477ff611069a9176b8733855abeb53f84aada6a50269330d"
+    },
     "ui-ux-pro-max": {
       "source": "nextlevelbuilder/ui-ux-pro-max-skill",
       "sourceType": "github",
