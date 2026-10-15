@@ -13,7 +13,7 @@ export function AuthorView({ vm }: { readonly vm: AuthorPageVM }) {
         <div>
           <h1 className={styles.login}>{vm.login}</h1>
           <p className={styles.meta}>
-            {vm.countText} · <a href={vm.profileUrl}>GitHub 프로필</a>
+            <a href={vm.profileUrl}>GitHub 프로필</a>
           </p>
         </div>
       </header>

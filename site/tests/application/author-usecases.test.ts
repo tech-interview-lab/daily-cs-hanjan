@@ -5,11 +5,10 @@ import { listCategories } from "@/application/usecases/list-categories";
 import { createSampleSource } from "../support/sample-source";
 
 describe("listAuthors", () => {
-  it("작성자별 답변 수를 세고 많은 순으로 정렬한다", async () => {
+  it("한 번이라도 답변한 사람을 이름순으로 돌려주고 답변 수는 담지 않는다", async () => {
     const authors = await listAuthors(await createSampleSource());
-    expect(authors.map((a) => [a.login, a.answerCount])).toEqual([
-      ["00kang", 1], ["lapera00", 1], ["rn1217", 1],
-    ]);
+    expect(authors.map((a) => a.login)).toEqual(["00kang", "lapera00", "rn1217"]);
+    expect(authors.every((a) => !("answerCount" in a))).toBe(true);
   });
 
   it("마감 댓글(YunDaeHyeon), 답글(ssun4098), 탈퇴 계정은 세지 않는다", async () => {
@@ -20,7 +19,8 @@ describe("listAuthors", () => {
 
   it("작성자별 답변 수의 합 + 탈퇴 계정 답변 수 = 전체 답변 수 (FR-2)", async () => {
     const source = await createSampleSource();
-    const authorSum = (await listAuthors(source)).reduce((sum, a) => sum + a.answerCount, 0);
+    let authorSum = 0;
+    for (const author of await listAuthors(source)) authorSum += (await listAnswersByAuthor(source, author.login))!.answers.length;
     let total = 0;
     for (const category of await listCategories(source)) {
       for (const q of (await listQuestionsByCategory(source, category.slug))!.questions) total += q.answerCount;

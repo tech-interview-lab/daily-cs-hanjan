@@ -62,8 +62,8 @@ describe("presenters", () => {
 
   it("작성자 내비게이션과 작성자 페이지를 만든다", () => {
     expect(authorHref("a b")).toBe("/author/a%20b");
-    expect(presentAuthorNav([{ login: "00kang", avatarUrl: null, answerCount: 9 }])).toEqual([
-      { label: "00kang", href: "/author/00kang", countText: "9", countLabel: "답변 9개", avatarUrl: null },
+    expect(presentAuthorNav([{ login: "00kang", avatarUrl: null }])).toEqual([
+      { label: "00kang", href: "/author/00kang", avatarUrl: null },
     ]);
     const page = presentAuthorPage({
       login: "00kang", avatarUrl: null,
@@ -72,8 +72,8 @@ describe("presenters", () => {
         question: { number: 33, text: "정규화", category: "데이터베이스", categorySlug: "database" },
       }],
     });
-    expect([page.countText, page.profileUrl, page.answers[0]?.questionHref, page.answers[0]?.dateText]).toEqual([
-      "답변 1개", "https://github.com/00kang", "/q/33", "2026-10-14 13:05",
+    expect([page.profileUrl, page.answers[0]?.questionHref, page.answers[0]?.dateText]).toEqual([
+      "https://github.com/00kang", "/q/33", "2026-10-14 13:05",
     ]);
   });
 

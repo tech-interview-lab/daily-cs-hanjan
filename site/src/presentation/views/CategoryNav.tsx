@@ -17,8 +17,8 @@ function NavList({ items, headingId, title }: NavListProps) {
                 {item.avatarUrl !== undefined && <Avatar src={item.avatarUrl} name={item.label} />}
                 {item.label}
               </span>
-              <span className={styles.count} aria-hidden="true">{item.countText}</span>
-              <span className="visually-hidden">{item.countLabel}</span>
+              {item.countText && <span className={styles.count} aria-hidden="true">{item.countText}</span>}
+              {item.countLabel && <span className="visually-hidden">{item.countLabel}</span>}
             </NavLink>
           </li>
         ))}
@@ -47,8 +47,8 @@ export function CategoryChips({ items }: { readonly items: readonly NavItemVM[] 
           <li key={item.href}>
             <a href={item.href} className={styles.chip}>
               {item.label}
-              <span className={styles.count} aria-hidden="true">{item.countText}</span>
-              <span className="visually-hidden">{item.countLabel}</span>
+              {item.countText && <span className={styles.count} aria-hidden="true">{item.countText}</span>}
+              {item.countLabel && <span className="visually-hidden">{item.countLabel}</span>}
             </a>
           </li>
         ))}

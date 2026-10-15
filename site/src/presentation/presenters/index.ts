@@ -112,8 +112,6 @@ export function presentAuthorNav(authors: readonly AuthorSummary[]): NavItemVM[]
   return authors.map((author) => ({
     label: author.login,
     href: authorHref(author.login),
-    countText: String(author.answerCount),
-    countLabel: `답변 ${author.answerCount}개`,
     avatarUrl: author.avatarUrl,
   }));
 }
@@ -122,7 +120,6 @@ export function presentAuthorPage(result: AuthorAnswers): AuthorPageVM {
   return {
     login: result.login,
     avatarUrl: result.avatarUrl,
-    countText: `답변 ${result.answers.length}개`,
     profileUrl: `https://github.com/${encodeURIComponent(result.login)}`,
     answers: result.answers.map(({ answer, question }) => ({
       id: answer.id,

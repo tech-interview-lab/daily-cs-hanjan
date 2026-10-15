@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GitHubGraphqlSource } from "@/adapters/source/github-graphql-source";
-import { listAuthors } from "@/application/usecases/list-authors";
+import { listAnswersByAuthor, listAuthors } from "@/application/usecases/list-authors";
 import { isAutoCloseComment } from "@/domain/policies/auto-close-policy";
 import { extractCategory } from "@/domain/policies/category-extractor";
 
@@ -37,10 +37,13 @@ async function authorCountsFromGitHub(): Promise<{ counts: Map<string, number>; 
 
 describe.skipIf(!token)("S3 작성자별 답변 수 대조 (FR-2)", () => {
   it("작성자별 답변 수가 별도 조회와 일치하고, 합 + 탈퇴 계정 수 = 전체 답변 수", async () => {
-    const authors = await listAuthors(new GitHubGraphqlSource({ token: token!, owner: OWNER, repo: REPO }));
+    const source = new GitHubGraphqlSource({ token: token!, owner: OWNER, repo: REPO });
+    const authors = await listAuthors(source);
     const expected = await authorCountsFromGitHub();
-    const actual = new Map(authors.map((a) => [a.login, a.answerCount]));
-    const sum = authors.reduce((s, a) => s + a.answerCount, 0);
+    // 화면에는 수를 보이지 않지만, 작성자 페이지의 답변 수로 FR-2를 검증한다
+    const actual = new Map<string, number>();
+    for (const author of authors) actual.set(author.login, (await listAnswersByAuthor(source, author.login))!.answers.length);
+    const sum = [...actual.values()].reduce((s, n) => s + n, 0);
     console.log(JSON.stringify({ 작성자별: Object.fromEntries(actual), 합: sum, 탈퇴계정: expected.deleted, 전체답변: expected.total }));
     expect(actual).toEqual(expected.counts);
     expect(sum + expected.deleted).toBe(expected.total);
