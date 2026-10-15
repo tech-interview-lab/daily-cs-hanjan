@@ -14,17 +14,19 @@ CS한잔 사이트. GitHub Discussions의 질문과 답변을 카테고리, 작�
 | 사이트 요구사항과 검증 기준 | `docs/site/site-spec.md` |
 | 사이트 코드 구조(레이어, MVC/MVVM, 폴더) | `docs/site/site-structure.md` |
 | 사이트 화면 | `docs/site/site-design.md` |
-| 결정과 근거 | `docs/adr/` |
+| 결정과 근거(렌더링 방식, 마감 댓글, 기술 스택) | `docs/adr/` |
 | AI 활용 원칙과 기록 방식 | `docs/ai/ai-workflow.md`, `docs/ai/ai-log-guide.md` |
 
 ## 스택과 명령
 
-- 스택: 미정 (`docs/adr/0001-rendering-strategy.md` 결정 후 기재)
-- 설치, 실행, 빌드, 점검 명령: 미정 (스택 확정 후 기재)
+- 스택: Next.js(App Router) + TypeScript, Vercel 배포. 근거와 세부 선택은 `docs/adr/0003-tech-stack.md`
+- 갱신: GitHub 웹훅으로 해당 질문의 캐시만 재검증, 열린 질문 화면은 15초 폴링(`docs/adr/0001-rendering-strategy.md`)
+- 테스트 Vitest, 레이어 의존 검사 dependency-cruiser
+- 설치, 실행, 빌드, 점검 명령: S0에서 `site/package.json` 생성 후 기재
 
 ## 폴더 구조
 
-- `site/src/`: 사이트 소스. 레이어는 domain, application, adapters, presentation, main이며 의존 규칙은 `.claude/rules/site-layer-rules.md`를 따릅니다.
+- `site/src/`: 사이트 소스. 레이어는 domain, application, adapters, presentation, main이며 의존 규칙은 `.claude/rules/site-layer-rules.md`를 따릅니다. `site/src/app`은 Controller만 호출하는 얇은 연결 코드입니다.
 - `docs/ai/logs/`: 작업별 AI 활용 기록
 - `n8n/`: 질문 생성 파이프라인 백업. 작업 범위에 없으면 수정하지 않습니다.
 - `.agents/`, `skills-lock.json`: 작업 범위에 없으면 수정하지 않습니다.
