@@ -5,6 +5,9 @@ import "../styles/global.css";
 import type { ShellVM } from "../viewmodels";
 import { SiteNav } from "./CategoryNav";
 import { MobileMenu } from "./MobileMenu";
+import controls from "./controls.module.css";
+import { SearchIcon } from "./icons";
+import search from "./search.module.css";
 import styles from "./shell.module.css";
 import { THEME_INIT_SCRIPT, ThemeToggle } from "./ThemeToggle";
 
@@ -23,6 +26,14 @@ export function RootShell({ vm, children }: { readonly vm: ShellVM; readonly chi
             </MobileMenu>
             <Link href="/" className={styles.siteName}>CS한잔</Link>
             <span className={styles.spacer} />
+            <form action="/search" method="get" role="search" className={search.headerSearch}>
+              <label htmlFor="header-search-input" className="visually-hidden">질문과 답변 검색</label>
+              <input id="header-search-input" className={search.input} type="search" name="q" placeholder="검색" maxLength={100} autoComplete="off" />
+              <button type="submit" className={controls.iconButton} aria-label="검색"><SearchIcon /></button>
+            </form>
+            <Link href="/search" className={`${controls.iconButton} ${search.headerSearchLink}`} aria-label="검색">
+              <SearchIcon />
+            </Link>
             <ThemeToggle />
           </div>
         </header>

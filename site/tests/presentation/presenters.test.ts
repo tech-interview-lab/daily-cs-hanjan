@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { authorHref, formatKstDate, formatKstDateTime, presentAuthorNav, presentAuthorPage, presentNavItems, presentQuestionItem, presentThreads } from "@/presentation/presenters";
+import { authorHref, formatKstDate, formatKstDateTime, presentAuthorNav, presentAuthorPage, presentNavItems, presentQuestionItem, presentSearch, presentThreads } from "@/presentation/presenters";
 
 describe("presenters", () => {
   it("날짜를 한국 시간 기준 YYYY-MM-DD로 표시한다", () => {
@@ -75,6 +75,24 @@ describe("presenters", () => {
     expect([page.countText, page.profileUrl, page.answers[0]?.questionHref, page.answers[0]?.dateText]).toEqual([
       "답변 1개", "https://github.com/00kang", "/q/33", "2026-10-14 13:05",
     ]);
+  });
+
+  it("검색 결과: 질문 일치는 제목 강조로, 답변 일치는 발췌로 나누고 건수를 요약한다", () => {
+    const summary = { number: 7, text: "캐시 질문", category: "CS", categorySlug: "cs", createdAt: "2026-10-01T00:00:00Z", closed: true, url: "u", answerCount: 1 };
+    const vm = presentSearch({
+      query: "캐시",
+      results: [{
+        question: summary,
+        hits: [
+          { document: { questionNumber: 7, field: "question", author: null, text: "캐시 질문" }, matchCount: 1, excerpt: [{ text: "캐시", match: true }, { text: " 질문", match: false }] },
+          { document: { questionNumber: 7, field: "answer", author: "a", text: "캐시는" }, matchCount: 1, excerpt: [{ text: "캐시", match: true }, { text: "는", match: false }] },
+        ],
+      }],
+    }, []);
+    expect(vm.summary).toBe('"캐시" 검색 결과 질문 1개');
+    expect(vm.results[0]?.titleSegments[0]).toEqual({ text: "캐시", match: true });
+    expect(vm.results[0]?.excerpts.map((e) => e.label)).toEqual(["답변 · a"]);
+    expect(presentSearch({ query: "x", results: [] }, []).summary).toBeNull();
   });
 });
 

@@ -1,4 +1,6 @@
+import { SubstringSearch } from "@/adapters/search/substring-search";
 import { GitHubWebhookReceiver } from "@/adapters/webhook/github-webhook-receiver";
+import type { SearchIndex } from "@/application/ports/search-index";
 import type { CacheInvalidator } from "@/application/ports/cache-invalidator";
 import type { DiscussionSource } from "@/application/ports/discussion-source";
 import type { WebhookReceiver } from "@/application/ports/webhook-receiver";
@@ -10,7 +12,7 @@ const cachedSource: DiscussionSource = {
   fetchOne: fetchOneCached,
 };
 
-export type Container = { readonly source: DiscussionSource };
+export type Container = { readonly source: DiscussionSource; readonly index: SearchIndex };
 
 export type WebhookContainer = {
   readonly receiver: WebhookReceiver | null;
@@ -19,7 +21,7 @@ export type WebhookContainer = {
 };
 
 export function getContainer(): Container {
-  return { source: cachedSource };
+  return { source: cachedSource, index: new SubstringSearch() };
 }
 
 export function getWebhookContainer(): WebhookContainer {

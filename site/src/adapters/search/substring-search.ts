@@ -11,7 +11,9 @@ export class SubstringSearch implements SearchIndex {
     for (const document of documents) {
       const text = normalize(document.text);
       const positions = findAll(text.toLowerCase(), needle);
-      if (positions.length) hits.push({ document, matchCount: positions.length, excerpt: excerpt(text, positions, needle.length) });
+      // 질문 문장은 제목으로 통째로 보여 주므로 전체를 나누고, 답변 본문은 첫 일치 주변만 발췌한다
+      const whole = document.field === "question";
+      if (positions.length) hits.push({ document, matchCount: positions.length, excerpt: excerpt(text, positions, needle.length, whole) });
     }
     return hits;
   }
@@ -27,10 +29,10 @@ function findAll(haystack: string, needle: string): number[] {
   return positions;
 }
 
-function excerpt(text: string, positions: number[], length: number): ExcerptSegment[] {
+function excerpt(text: string, positions: number[], length: number, whole: boolean): ExcerptSegment[] {
   const first = positions[0]!;
-  const start = Math.max(0, first - CONTEXT);
-  const end = Math.min(text.length, first + length + CONTEXT * 2);
+  const start = whole ? 0 : Math.max(0, first - CONTEXT);
+  const end = whole ? text.length : Math.min(text.length, first + length + CONTEXT * 2);
   const segments: ExcerptSegment[] = [];
   let cursor = start;
   for (const at of positions) {

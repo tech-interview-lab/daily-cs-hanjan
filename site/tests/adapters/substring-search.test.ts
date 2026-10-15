@@ -28,6 +28,12 @@ describe("SubstringSearch", () => {
     expect(shown.length).toBeLessThan(140);
   });
 
+  it("질문 문장은 길어도 자르지 않고 전체를 나눈다(제목으로 표시)", () => {
+    const text = `${"가".repeat(100)}인덱스${"나".repeat(200)}`;
+    const [hit] = search.search([doc(text, "question")], "인덱스");
+    expect(joined(hit!.excerpt)).toBe(`${"가".repeat(100)}[인덱스]${"나".repeat(200)}`);
+  });
+
   it("일치가 없거나 검색어가 비면 결과가 없다", () => {
     expect(search.search([doc("TCP")], "UDP")).toEqual([]);
     expect(search.search([doc("TCP")], "   ")).toEqual([]);
