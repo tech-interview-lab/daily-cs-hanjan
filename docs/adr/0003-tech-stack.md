@@ -33,11 +33,12 @@
 | 배포 | Vercel Hobby | ADR-0001 | 확정 |
 | 화면 | 서버 컴포넌트 기본. 클라이언트 컴포넌트는 테마 전환, 검색 입력, 새 답변 폴링에 한정 | JS 최소화. View는 ViewModel만 받음 | 확정(AI 제안 수락) |
 | 라우팅 폴더 | `site/src/app`은 Controller만 호출하는 얇은 연결 코드 | site-structure.md의 레이어 원칙 | 확정(AI 제안 수락) |
-| 캐시 | Next.js 데이터 캐시와 태그(`q-{number}`, 목록 태그). Next.js 캐시 API는 `main`에서만 사용 | 프레임워크를 최외곽에 둠 | 확정(AI 제안 수락) |
+| 캐시 | Cache Components의 `"use cache"`, `cacheTag`(`q-{number}`, `discussions`), `cacheLife("hours")`. `unstable_cache`는 Next.js 16에서 대체됨. 캐시 API는 `main`에서만 사용 | 프레임워크를 최외곽에 둠. `"use cache"` 함수는 클래스 인스턴스를 캡처할 수 없어 함수 안에서 어댑터를 만듦 | 확정(AI 제안 수락) |
+| Partial Prefetching | 끔(`partialPrefetching: false`) | 켜면 목록에 없는 경로에 미리 만든 틀을 먼저 보내 없는 카테고리도 HTTP 200이 됨(S1에서 확인). 카테고리는 모두 빌드 때 생성하므로 끄는 비용이 없음 | 확정(AI 제안 수락) |
 | 본문 렌더링 | GraphQL `bodyHTML`을 `sanitize-html`로 다시 살균해 출력. 검색에는 `bodyText` 사용 | GitHub와 같은 모양. 마크다운 파서 불필요. 외부 입력 경계에서 심층 방어 | 확정(AI 제안 수락) |
 | 검색 | 서버에서 부분 문자열 일치. 대상은 캐시된 전체 목록 | 토큰 기반 검색은 한국어 조사(예: "캐시는")에 약함. JS 없이도 동작 | 확정(AI 제안 수락) |
 | 스타일 | CSS Modules와 전역 CSS 변수(디자인 토큰) | 런타임 비용 없음. [site-design.md](../site/site-design.md) 6장 토큰을 그대로 사용 | 확정(AI 제안 수락) |
-| 글꼴 | Pretendard를 `next/font/local`로 자체 호스팅 | 외부 CDN 의존 없음. 레이아웃 이동 방지 | 확정(AI 제안 수락) |
+| 글꼴 | Pretendard npm 패키지의 동적 서브셋 CSS를 import해 자체 호스팅 | 외부 CDN 의존 없음. 필요한 글자 조각만 내려받음. `next/font/local`은 전체 파일(약 2MB)을 한 번에 받아야 해서 S1에서 변경 | 확정(AI 제안 수락) |
 | 테스트 | Vitest | TypeScript 설정 공유 | 확정(AI 제안 수락) |
 | 의존 규칙 검사 | dependency-cruiser | [site-layer-rules.md](../../.claude/rules/site-layer-rules.md)의 import 방향을 CI에서 검사 | 확정(AI 제안 수락) |
 | GraphQL 토큰 | fine-grained PAT, Discussions 읽기 권한만. Vercel 환경 변수 | 서버에만 보관. 토큰 없는 요청은 거부됨(S0에서 HTTP 403 확인) | 확정(AI 제안 수락) |
