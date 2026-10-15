@@ -117,6 +117,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | ListAnswersByAuthor | FR-2, SC-1 | DiscussionSource |
 | SearchQuestions | FR-3 | DiscussionSource, SearchIndex |
 | HandleDiscussionEvent | FR-4 | WebhookReceiver, CacheInvalidator |
+| WarmQuestionCache | FR-4 | DiscussionSource, CacheInvalidator |
 
 - 마감 댓글 제외(C-1)와 카테고리 추출은 각 유스케이스가 도메인 정책(AutoClosePolicy, CategoryExtractor)으로 수행합니다.
 - 열린 화면의 15초 폴링 API는 GetQuestionDetail 결과를 그대로 돌려주고, 새 답변 판별은 화면(클라이언트)에서 id 비교로 합니다. 질문당 답변이 수 건이라 별도 유스케이스를 두지 않았습니다(S2).
@@ -204,7 +205,8 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | 2 | HandleDiscussionEvent 호출 | application/usecases |
 | 3 | 서명 검증(실패 시 401)과 질문 번호 추출 | WebhookReceiver |
 | 4 | 해당 질문 태그와 목록 태그 재검증 | CacheInvalidator |
-| 5 | 다음 요청에서 해당 질문만 다시 조회 | main/container의 캐시 + DiscussionSource |
+| 5 | 응답 후(`after`) 그 질문과 전체 목록을 미리 조회해 캐시를 채움. 웹훅이 알려 준 변경(댓글 ID, 수정 본문, 글 존재 여부)이 조회 결과에 아직 없으면 비우고 재시도 | WarmQuestionCache |
+| 6 | 이후 방문은 캐시를 받음 | main/container의 캐시 |
 
 웹훅 누락 대비로 시간 기반 재검증을 함께 둡니다([ADR-0001](../adr/0001-rendering-strategy.md) 5장).
 
@@ -226,7 +228,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | 1 | 15초마다 마지막 답변 id로 요청 | presentation/views의 클라이언트 컴포넌트 |
 | 2 | GetQuestionDetail 호출 | app/api/questions → controllers → usecases |
 | 3 | 새 답변 ViewModel 반환 | presentation/presenters |
-| 4 | 답변 목록 끝에 추가해 그 영역만 다시 그림 | 클라이언트 컴포넌트 |
+| 4 | 추가는 끝에 붙이고, 수정은 본문을 바꾸고, 삭제는 제거해 그 영역만 다시 그림 | 클라이언트 컴포넌트(presenters/merge-threads) |
 
 ## 11. 배포 환경과의 관계
 
@@ -255,7 +257,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 |---|---|
 | S0 | 엔티티, 정책, DiscussionSource 포트, github-graphql과 fixture 어댑터, 본문 살균 |
 | S1 | ListCategories, ListQuestionsByCategory, ListRecentQuestions, 홈과 카테고리 화면, 공통 레이아웃, `main/container` 조립과 데이터 캐시 적용 |
-| S2 | GetQuestionDetail, HandleDiscussionEvent, 웹훅과 폴링 API, 질문 상세 화면 |
+| S2 | GetQuestionDetail, HandleDiscussionEvent, WarmQuestionCache, 웹훅과 폴링 API, 질문 상세 화면 |
 | S3 | ListAnswersByAuthor, 작성자 화면 |
 | S4 | SearchQuestions, 검색 어댑터, 검색 화면 |
 
