@@ -97,7 +97,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | 포트 | 소유 레이어 | 메서드(개념) | 실제 구현 | 대체 구현 |
 |---|---|---|---|---|
 | DiscussionSource | application | fetchAll, fetchOne(number) | GitHub GraphQL 어댑터 | fixture 파일 어댑터 |
-| SearchIndex | application | build(questions), query(text) | 부분 문자열 일치 | 같은 구현(입출력 없음) |
+| SearchIndex | application | search(documents, query) → 일치 횟수와 발췌 조각 | 부분 문자열 일치(`adapters/search/substring-search`) | 같은 구현(입출력 없음) |
 | WebhookReceiver | application | receive(body, signature, eventName) | GitHub 웹훅 어댑터. HMAC-SHA256 서명 검증과 이벤트 해석(질문 번호 추출) | 결과를 고정해 돌려주는 구현 |
 | CacheInvalidator | application | invalidateQuestion(number), invalidateLists() | Next.js 캐시 태그 재검증(`main`) | 호출 기록 구현 |
 
@@ -260,7 +260,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | S1 | ListCategories, ListQuestionsByCategory, ListRecentQuestions, 홈과 카테고리 화면, 공통 레이아웃, `main/container` 조립과 데이터 캐시 적용 |
 | S2 | GetQuestionDetail, HandleDiscussionEvent, WarmQuestionCache, 웹훅과 폴링 API, 질문 상세 화면 |
 | S3 | ListAuthors, ListAnswersByAuthor, 작성자 화면, 아바타, 테마 버튼 2단계, 레이아웃 가운데 정렬 |
-| S4 | SearchQuestions, 검색 어댑터, 검색 화면 |
+| S4 | SearchQuestions, 부분 문자열 검색 어댑터, 검색 화면, 헤더 검색창 |
 
 ## 13. 보안과 권한
 
