@@ -14,12 +14,24 @@
   font-size: 0.875em;
 }
 
+/* 가로로 넘치는 쪽 가장자리에 그림자를 보여 더 있다는 단서를 준다. 끝까지 스크롤하면 덮개(local)가 그림자(scroll)를 가린다 */
+.prose :global(pre),
+.prose :global(table) {
+  --cover: var(--color-surface);
+  background:
+    linear-gradient(to right, var(--cover) 30%, transparent) left center / 2.5rem 100% no-repeat local,
+    linear-gradient(to left, var(--cover) 30%, transparent) right center / 2.5rem 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, var(--scroll-shadow), transparent) left center / 0.875rem 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, var(--scroll-shadow), transparent) right center / 0.875rem 100% no-repeat scroll,
+    var(--cover);
+}
+
 .prose :global(pre) {
+  --cover: var(--color-code-bg);
   overflow-x: auto;
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-input);
-  background: var(--color-code-bg);
   font-size: 0.875rem;
   line-height: 1.6;
   overflow-wrap: normal;
@@ -36,7 +48,10 @@
   word-break: normal;
 }
 
+/* 전역 overflow-wrap: anywhere가 표 칸을 글자 단위로 쪼개지 않도록 단어 단위로만 줄을 바꾼다 */
 .prose :global(:where(th, td)) {
+  overflow-wrap: normal;
+  word-break: keep-all;
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--color-border);
   text-align: left;
