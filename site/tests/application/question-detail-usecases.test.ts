@@ -52,7 +52,7 @@ describe("handleDiscussionEvent", () => {
   }
 
   it("질문이 바뀌면 그 질문과 목록만 무효화한다", () => {
-    const { calls, run } = setup({ kind: "discussion-changed", questionNumber: 34 });
+    const { calls, run } = setup({ kind: "discussion-changed", questionNumber: 34, expectation: null });
     expect(run().kind).toBe("discussion-changed");
     expect(calls).toEqual(["q-34", "lists"]);
   });
