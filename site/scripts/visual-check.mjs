@@ -1,4 +1,4 @@
-// 사용법: node scripts/visual-check.mjs <baseUrl> <outDir> <path...>
+// 사용법: node scripts/visual-check.mjs <baseUrl> <outDir> <path...>  (VIEWPORT_ONLY=1이면 첫 화면만 캡처)
 // 폭 4개 × 라이트/다크로 캡처하고 가로 넘침, 대비, 접근 가능한 이름, 키보드 동작을 측정한다.
 import { spawn } from "node:child_process";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
@@ -111,7 +111,7 @@ for (const path of paths) {
       await open(baseUrl + path);
       const checks = await evaluate(PAGE_CHECKS);
       const name = `${path === "/" ? "home" : path.replace(/^\//, "").replace(/\//g, "-")}-${theme}-${width}`;
-      const shot = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true });
+      const shot = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: process.env.VIEWPORT_ONLY !== "1" });
       writeFileSync(join(outDir, `${name}.png`), Buffer.from(shot.data, "base64"));
       report.push({ path, theme, width, ...checks });
     }
