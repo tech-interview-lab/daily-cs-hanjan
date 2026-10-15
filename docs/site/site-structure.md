@@ -114,6 +114,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | ListQuestionsByCategory | FR-1, SC-3 | DiscussionSource |
 | ListRecentQuestions | 홈 | DiscussionSource |
 | GetQuestionDetail | FR-1, SC-2 | DiscussionSource |
+| ListAuthors | FR-2(사이드바, 정적 경로) | DiscussionSource |
 | ListAnswersByAuthor | FR-2, SC-1 | DiscussionSource |
 | SearchQuestions | FR-3 | DiscussionSource, SearchIndex |
 | HandleDiscussionEvent | FR-4 | WebhookReceiver, CacheInvalidator |
@@ -258,7 +259,7 @@ View는 ViewModel만 입력으로 받습니다. domain 객체를 View로 직접 
 | S0 | 엔티티, 정책, DiscussionSource 포트, github-graphql과 fixture 어댑터, 본문 살균 |
 | S1 | ListCategories, ListQuestionsByCategory, ListRecentQuestions, 홈과 카테고리 화면, 공통 레이아웃, `main/container` 조립과 데이터 캐시 적용 |
 | S2 | GetQuestionDetail, HandleDiscussionEvent, WarmQuestionCache, 웹훅과 폴링 API, 질문 상세 화면 |
-| S3 | ListAnswersByAuthor, 작성자 화면 |
+| S3 | ListAuthors, ListAnswersByAuthor, 작성자 화면, 아바타, 테마 버튼 2단계, 레이아웃 가운데 정렬 |
 | S4 | SearchQuestions, 검색 어댑터, 검색 화면 |
 
 ## 13. 보안과 권한
