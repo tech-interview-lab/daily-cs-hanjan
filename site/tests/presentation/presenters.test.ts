@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatKstDate, formatKstDateTime, presentNavItems, presentQuestionItem, presentThreads } from "@/presentation/presenters";
+import { authorHref, formatKstDate, formatKstDateTime, presentAuthorNav, presentAuthorPage, presentNavItems, presentQuestionItem, presentThreads } from "@/presentation/presenters";
 
 describe("presenters", () => {
   it("날짜를 한국 시간 기준 YYYY-MM-DD로 표시한다", () => {
@@ -48,6 +48,33 @@ describe("presenters", () => {
     const [thread] = presentThreads([{ answer, replies: [] }]);
     expect(thread?.answer.authorLabel).toBe("탈퇴한 사용자");
     expect(thread?.answer.authorDeleted).toBe(true);
+  });
+
+  it("작성자 링크와 아바타를 담고, 탈퇴 계정은 링크가 없다", () => {
+    const base = { id: "a", questionNumber: 1, body: "", bodyHtml: "", bodyText: "", createdAt: "2026-10-01T00:00:00Z", parentId: null };
+    const [kept, gone] = presentThreads([
+      { answer: { ...base, author: "lapera00", authorAvatarUrl: "https://avatars.githubusercontent.com/u/1" }, replies: [] },
+      { answer: { ...base, id: "b", author: null, authorAvatarUrl: null }, replies: [] },
+    ]);
+    expect([kept?.answer.authorHref, kept?.answer.authorAvatarUrl]).toEqual(["/author/lapera00", "https://avatars.githubusercontent.com/u/1"]);
+    expect([gone?.answer.authorHref, gone?.answer.authorLabel]).toEqual([null, "탈퇴한 사용자"]);
+  });
+
+  it("작성자 내비게이션과 작성자 페이지를 만든다", () => {
+    expect(authorHref("a b")).toBe("/author/a%20b");
+    expect(presentAuthorNav([{ login: "00kang", avatarUrl: null, answerCount: 9 }])).toEqual([
+      { label: "00kang", href: "/author/00kang", countText: "9", countLabel: "답변 9개", avatarUrl: null },
+    ]);
+    const page = presentAuthorPage({
+      login: "00kang", avatarUrl: null,
+      answers: [{
+        answer: { id: "a", questionNumber: 33, author: "00kang", authorAvatarUrl: null, body: "", bodyHtml: "<p>x</p>", bodyText: "", createdAt: "2026-10-14T04:05:00Z", parentId: null },
+        question: { number: 33, text: "정규화", category: "데이터베이스", categorySlug: "database" },
+      }],
+    });
+    expect([page.countText, page.profileUrl, page.answers[0]?.questionHref, page.answers[0]?.dateText]).toEqual([
+      "답변 1개", "https://github.com/00kang", "/q/33", "2026-10-14 13:05",
+    ]);
   });
 });
 

@@ -3,6 +3,7 @@ export type NavItemVM = {
   readonly href: string;
   readonly countText: string;
   readonly countLabel: string;
+  readonly avatarUrl?: string | null;
 };
 
 export type QuestionItemVM = {
@@ -19,6 +20,7 @@ export type QuestionItemVM = {
 
 export type ShellVM = {
   readonly categories: readonly NavItemVM[];
+  readonly authors: readonly NavItemVM[];
   readonly discussionsUrl: string;
   readonly repositoryUrl: string;
 };
@@ -38,6 +40,8 @@ export type AnswerVM = {
   readonly id: string;
   readonly authorLabel: string;
   readonly authorDeleted: boolean;
+  readonly authorHref: string | null;
+  readonly authorAvatarUrl: string | null;
   readonly dateText: string;
   readonly dateTime: string;
   readonly bodyHtml: string;
@@ -62,4 +66,23 @@ export type QuestionDetailVM = {
   readonly discussionUrl: string;
   readonly pollUrl: string;
   readonly threads: readonly ThreadVM[];
+};
+
+export type AuthorAnswerVM = {
+  readonly id: string;
+  readonly questionText: string;
+  readonly questionHref: string;
+  readonly categoryLabel: string;
+  readonly categoryHref: string;
+  readonly dateText: string;
+  readonly dateTime: string;
+  readonly bodyHtml: string;
+};
+
+export type AuthorPageVM = {
+  readonly login: string;
+  readonly avatarUrl: string | null;
+  readonly countText: string;
+  readonly profileUrl: string;
+  readonly answers: readonly AuthorAnswerVM[];
 };

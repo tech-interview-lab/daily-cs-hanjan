@@ -8,9 +8,19 @@ import { getQuestionDetail, listQuestionNumbers } from "@/application/usecases/g
 import { handleDiscussionEvent } from "@/application/usecases/handle-discussion-event";
 import { warmQuestionCache } from "@/application/usecases/warm-question-cache";
 import { listCategories } from "@/application/usecases/list-categories";
+import { listAnswersByAuthor, listAuthors } from "@/application/usecases/list-authors";
 import { listQuestionsByCategory } from "@/application/usecases/list-questions-by-category";
 import { listRecentQuestions } from "@/application/usecases/list-recent-questions";
-import { presentCategoryPage, presentNavItems, presentQuestionDetail, presentQuestionItem, presentThreads } from "../presenters";
+import {
+  presentAuthorNav,
+  presentAuthorPage,
+  presentCategoryPage,
+  presentNavItems,
+  presentQuestionDetail,
+  presentQuestionItem,
+  presentThreads,
+} from "../presenters";
+import { AuthorView } from "../views/AuthorView";
 import { CategoryView } from "../views/CategoryView";
 import { HomeView } from "../views/HomeView";
 import { NotFoundView } from "../views/NotFoundView";
@@ -25,9 +35,9 @@ const REPOSITORY_URL = "https://github.com/tech-interview-lab/daily-cs-hanjan";
 export const SITE_NAME = "CS한잔";
 
 export async function renderRootLayout(deps: Deps, children: ReactNode) {
-  const categories = presentNavItems(await listCategories(deps.source));
+  const [categories, authors] = await Promise.all([listCategories(deps.source), listAuthors(deps.source)]);
   return (
-    <RootShell vm={{ categories, discussionsUrl: `${REPOSITORY_URL}/discussions`, repositoryUrl: REPOSITORY_URL }}>
+    <RootShell vm={{ categories: presentNavItems(categories), authors: presentAuthorNav(authors), discussionsUrl: `${REPOSITORY_URL}/discussions`, repositoryUrl: REPOSITORY_URL }}>
       {children}
     </RootShell>
   );
@@ -130,4 +140,19 @@ export async function webhookResponse(deps: WebhookDeps, request: Request): Prom
       });
       return Response.json({ revalidated: result.questionNumber });
   }
+}
+
+export async function renderAuthor(deps: Deps, login: string) {
+  const result = await listAnswersByAuthor(deps.source, login);
+  if (!result) notFound();
+  return <AuthorView vm={presentAuthorPage(result)} />;
+}
+
+export async function authorStaticParams(deps: Deps) {
+  return (await listAuthors(deps.source)).map((author) => ({ login: author.login }));
+}
+
+export async function authorTitle(deps: Deps, login: string): Promise<string> {
+  const result = await listAnswersByAuthor(deps.source, login);
+  return result ? `${result.login}의 답변` : "페이지를 찾을 수 없습니다";
 }

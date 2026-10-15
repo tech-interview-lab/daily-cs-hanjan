@@ -2,11 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { announceNew, mergeNewThreads } from "../presenters/merge-threads";
-import type { ThreadVM } from "../viewmodels";
+import type { AnswerVM, ThreadVM } from "../viewmodels";
+import { Avatar } from "./Avatar";
 import styles from "./detail.module.css";
 import prose from "./prose.module.css";
 
 const POLL_INTERVAL_MS = 15_000;
+
+function AuthorName({ answer }: { readonly answer: AnswerVM }) {
+  return answer.authorHref ? <a href={answer.authorHref}>{answer.authorLabel}</a> : answer.authorLabel;
+}
 const MAX_FAILURES = 3;
 
 type Props = {
@@ -70,7 +75,8 @@ export function AnswerThreads({ initialThreads, pollUrl, discussionUrl }: Props)
               <article aria-labelledby={`answer-${answer.id}`}>
                 <div className={styles.cardHeader}>
                   <h3 id={`answer-${answer.id}`} className={styles.author} data-deleted={answer.authorDeleted ? "" : undefined}>
-                    {answer.authorLabel}
+                    <Avatar src={answer.authorAvatarUrl} name={answer.authorDeleted ? null : answer.authorLabel} />
+                    <AuthorName answer={answer} />
                   </h3>
                   <time className={styles.time} dateTime={answer.dateTime}>{answer.dateText}</time>
                   {answer.isNew && <span className={styles.newLabel}>새 답변</span>}
@@ -84,7 +90,10 @@ export function AnswerThreads({ initialThreads, pollUrl, discussionUrl }: Props)
                       {replies.map((reply) => (
                         <li key={reply.id}>
                           <div className={styles.replyHeader}>
-                            <span className={styles.replyAuthor} data-deleted={reply.authorDeleted ? "" : undefined}>{reply.authorLabel}</span>
+                            <span className={styles.replyAuthor} data-deleted={reply.authorDeleted ? "" : undefined}>
+                              <Avatar src={reply.authorAvatarUrl} name={reply.authorDeleted ? null : reply.authorLabel} />
+                              <AuthorName answer={reply} />
+                            </span>
                             <time className={styles.time} dateTime={reply.dateTime}>{reply.dateText}</time>
                             {reply.isNew && <span className={styles.newLabel}>새 답글</span>}
                             {reply.isEdited && <span className={styles.newLabel}>수정됨</span>}

@@ -1,22 +1,39 @@
 import type { NavItemVM } from "../viewmodels";
+import { Avatar } from "./Avatar";
 import styles from "./nav.module.css";
 import { NavLink } from "./NavLink";
 
-export function CategoryNav({ items, headingId }: { readonly items: readonly NavItemVM[]; readonly headingId: string }) {
+type NavListProps = { readonly items: readonly NavItemVM[]; readonly headingId: string; readonly title: string };
+
+function NavList({ items, headingId, title }: NavListProps) {
   return (
-    <nav aria-labelledby={headingId}>
-      <h2 id={headingId} className={styles.heading}>카테고리</h2>
+    <section aria-labelledby={headingId} className={styles.group}>
+      <h2 id={headingId} className={styles.heading}>{title}</h2>
       <ul className={styles.list}>
         {items.map((item) => (
           <li key={item.href}>
             <NavLink href={item.href} className={styles.link}>
-              <span>{item.label}</span>
+              <span className={styles.label}>
+                {item.avatarUrl !== undefined && <Avatar src={item.avatarUrl} name={item.label} />}
+                {item.label}
+              </span>
               <span className={styles.count} aria-hidden="true">{item.countText}</span>
               <span className="visually-hidden">{item.countLabel}</span>
             </NavLink>
           </li>
         ))}
       </ul>
+    </section>
+  );
+}
+
+type SiteNavProps = { readonly categories: readonly NavItemVM[]; readonly authors: readonly NavItemVM[]; readonly idPrefix: string };
+
+export function SiteNav({ categories, authors, idPrefix }: SiteNavProps) {
+  return (
+    <nav aria-label="사이트 메뉴">
+      <NavList items={categories} headingId={`${idPrefix}-categories`} title="카테고리" />
+      {authors.length > 0 && <NavList items={authors} headingId={`${idPrefix}-authors`} title="작성자" />}
     </nav>
   );
 }

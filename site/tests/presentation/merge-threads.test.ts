@@ -3,7 +3,7 @@ import { announceNew, mergeNewThreads } from "@/presentation/presenters/merge-th
 import type { AnswerVM, ThreadVM } from "@/presentation/viewmodels";
 
 const a = (id: string, extra: Partial<AnswerVM> = {}): AnswerVM => ({
-  id, authorLabel: id, authorDeleted: false, dateText: "", dateTime: "", bodyHtml: `<p>${id}</p>`, ...extra,
+  id, authorLabel: id, authorDeleted: false, authorHref: null, authorAvatarUrl: null, dateText: "", dateTime: "", bodyHtml: `<p>${id}</p>`, ...extra,
 });
 const t = (answer: AnswerVM, replies: AnswerVM[] = []): ThreadVM => ({ answer, replies });
 const counts = (r: ReturnType<typeof mergeNewThreads>) => [r.newAnswers, r.newReplies, r.edited, r.removed];
