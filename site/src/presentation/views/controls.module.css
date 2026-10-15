@@ -50,3 +50,14 @@
   font-size: 1rem;
   font-weight: 700;
 }
+
+.whenLight, .whenDark { display: inline-flex; }
+.whenDark { display: none; }
+
+:global(:root[data-theme="dark"]) .whenLight { display: none; }
+:global(:root[data-theme="dark"]) .whenDark { display: inline-flex; }
+
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .whenLight { display: none; }
+  :global(:root:not([data-theme="light"])) .whenDark { display: inline-flex; }
+}

@@ -69,15 +69,15 @@ await key("Escape", "Escape", 27);
 await sleep(100);
 const afterClose = await evaluate("({ open: document.getElementById('site-menu').open, focusedLabel: document.activeElement.getAttribute('aria-label') })");
 
-// 테마 전환: 시스템 → 라이트 → 다크 → 시스템, 새로고침 후 유지
-const toggle = "document.querySelector('button[aria-label^=\"테마\"]')";
-const themeSteps = [];
+// 테마 전환: 처음엔 OS 설정(여기선 라이트), 누를 때마다 다크 ⇄ 라이트, 새로고침 후 유지
+const toggle = "document.querySelector('[data-theme-toggle]')";
+const visibleIcon = `[...${toggle}.querySelectorAll('span')].filter((s) => getComputedStyle(s).display !== 'none').length`;
+const themeSteps = [await evaluate(`(document.documentElement.dataset.theme || "system") + " / " + ${toggle}.getAttribute("aria-label") + " / 보이는 아이콘 " + ${visibleIcon}`)];
 for (let i = 0; i < 3; i++) {
   await evaluate(`${toggle}.click(), true`);
   await sleep(50);
-  themeSteps.push(await evaluate(`(document.documentElement.dataset.theme || "system") + " / " + ${toggle}.getAttribute("aria-label")`));
+  themeSteps.push(await evaluate(`(document.documentElement.dataset.theme || "system") + " / " + ${toggle}.getAttribute("aria-label") + " / 보이는 아이콘 " + ${visibleIcon}`));
 }
-await evaluate(`${toggle}.click(), true`);
 await open(baseUrl + paths[0]);
 const persisted = await evaluate("document.documentElement.dataset.theme || 'system'");
 
