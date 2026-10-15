@@ -4,7 +4,7 @@ import { satisfies, warmQuestionCache } from "@/application/usecases/warm-questi
 
 const item = (answers: { id: string; body: string }[]): QuestionWithAnswers => ({
   question: { number: 34, title: "[CS] t", text: "t", note: null, category: "CS", createdAt: "2026-10-15T00:00:00Z", closed: false, url: "u", bodyHtml: "" },
-  answers: answers.map((a) => ({ ...a, questionNumber: 34, author: "x", bodyHtml: "", bodyText: "", createdAt: "2026-10-15T00:00:00Z", parentId: null })),
+  answers: answers.map((a) => ({ ...a, questionNumber: 34, author: "x", authorAvatarUrl: null, bodyHtml: "", bodyText: "", createdAt: "2026-10-15T00:00:00Z", parentId: null })),
 });
 
 function setup(oneResults: (QuestionWithAnswers | null)[]) {

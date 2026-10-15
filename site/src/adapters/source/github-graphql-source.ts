@@ -12,10 +12,10 @@ const REPLIES_PAGE = 50;
 
 const COMMENT_FIELDS = `
   id body bodyHTML bodyText createdAt
-  author { login }
+  author { login avatarUrl(size: 96) }
   replies(first: ${REPLIES_PAGE}) {
     totalCount
-    nodes { id body bodyHTML bodyText createdAt author { login } }
+    nodes { id body bodyHTML bodyText createdAt author { login avatarUrl(size: 96) } }
   }
 `;
 
@@ -60,7 +60,7 @@ const MORE_COMMENTS_QUERY = `
   }
 `;
 
-type RawAuthor = { login: string } | null;
+type RawAuthor = { login: string; avatarUrl: string } | null;
 type RawReply = { id: string; body: string; bodyHTML: string; bodyText: string; createdAt: string; author: RawAuthor };
 type RawComment = RawReply & { replies: { totalCount: number; nodes: RawReply[] } };
 type PageInfo = { hasNextPage: boolean; endCursor: string | null };
@@ -189,10 +189,22 @@ function toAnswer(questionNumber: number, raw: RawReply, parentId: string | null
     id: raw.id,
     questionNumber,
     author: raw.author?.login ?? null,
+    authorAvatarUrl: safeAvatarUrl(raw.author?.avatarUrl),
     body: raw.body,
     bodyHtml: sanitizeBodyHtml(raw.bodyHTML),
     bodyText: raw.bodyText,
     createdAt: raw.createdAt,
     parentId,
   };
+}
+
+// 아바타는 GitHub 이미지 서버의 https 주소만 쓴다. 본문 살균과 같은 이유로 외부 입력을 그대로 내보내지 않는다
+function safeAvatarUrl(url: string | undefined): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && parsed.hostname.endsWith(".githubusercontent.com") ? parsed.toString() : null;
+  } catch {
+    return null;
+  }
 }

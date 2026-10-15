@@ -44,7 +44,7 @@ describe("presenters", () => {
   });
 
   it("작성자가 없으면 탈퇴한 사용자로 표시한다", () => {
-    const answer = { id: "a", questionNumber: 1, author: null, body: "", bodyHtml: "", bodyText: "", createdAt: "2026-10-01T00:00:00Z", parentId: null };
+    const answer = { id: "a", questionNumber: 1, author: null, authorAvatarUrl: null, body: "", bodyHtml: "", bodyText: "", createdAt: "2026-10-01T00:00:00Z", parentId: null };
     const [thread] = presentThreads([{ answer, replies: [] }]);
     expect(thread?.answer.authorLabel).toBe("탈퇴한 사용자");
     expect(thread?.answer.authorDeleted).toBe(true);
