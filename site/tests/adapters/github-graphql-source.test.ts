@@ -29,6 +29,12 @@ describe("GitHubGraphqlSource", () => {
     expect(categories).toEqual(["네트워크", "AI", "CS"]);
   });
 
+  it("질문 문장을 본문에서 추출하고 형식이 다르면 제목을 쓴다", async () => {
+    const { source } = create();
+    const texts = (await source.fetchAll()).map((i) => i.question.text);
+    expect(texts).toEqual(["TCP와 UDP의 차이는?", "[AI] 2026-10-02 오늘의 질문", "동기와 비동기의 차이는?"]);
+  });
+
   it("글 목록과 댓글을 페이지 단위로 끝까지 가져온다", async () => {
     const { source, fake } = create({ discussionPageSize: 2, firstPageComments: 2 });
     const all = await source.fetchAll();

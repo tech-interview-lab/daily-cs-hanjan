@@ -1,69 +1,150 @@
 [
   {
-    "id": "D_1", "number": 1, "title": "📌 CS한잔 스터디 그라운드룰", "closed": false,
-    "createdAt": "2026-09-22T00:00:00Z", "url": "https://github.com/o/r/discussions/1",
+    "id": "D_1",
+    "number": 1,
+    "title": "📌 CS한잔 스터디 그라운드룰",
+    "closed": false,
+    "createdAt": "2026-09-22T00:00:00Z",
+    "url": "https://github.com/o/r/discussions/1",
+    "body": "# 📌 그라운드룰\r\n\r\n본문",
     "bodyHTML": "<p>그라운드룰</p>",
-    "comments": { "totalCount": 0, "pageInfo": { "hasNextPage": false, "endCursor": null }, "nodes": [] }
+    "comments": {
+      "totalCount": 0,
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
+      "nodes": []
+    }
   },
   {
-    "id": "D_2", "number": 2, "title": "[네트워크] 2026-10-01 오늘의 질문", "closed": true,
-    "createdAt": "2026-10-01T00:05:00Z", "url": "https://github.com/o/r/discussions/2",
+    "id": "D_2",
+    "number": 2,
+    "title": "[네트워크] 2026-10-01 오늘의 질문",
+    "closed": true,
+    "createdAt": "2026-10-01T00:05:00Z",
+    "url": "https://github.com/o/r/discussions/2",
+    "body": "## 🙋 오늘의 질문\n\n**[네트워크]** TCP와 UDP의 차이는?\n\n---\n\n💬 답변은 댓글로",
     "bodyHTML": "<h2 dir=\"auto\">🙋 오늘의 질문</h2><p dir=\"auto\">TCP와 UDP의 차이는?</p>",
     "comments": {
-      "totalCount": 4, "pageInfo": { "hasNextPage": false, "endCursor": null },
+      "totalCount": 4,
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
       "nodes": [
         {
-          "id": "C_2_1", "createdAt": "2026-10-01T01:00:00Z", "author": { "login": "lapera00" },
+          "id": "C_2_1",
+          "createdAt": "2026-10-01T01:00:00Z",
+          "author": {
+            "login": "lapera00"
+          },
           "body": "TCP는 연결 지향입니다.",
           "bodyText": "TCP는 연결 지향입니다.",
           "bodyHTML": "<p dir=\"auto\">TCP는 <strong>연결 지향</strong>입니다. 😀</p><script>alert(1)</script><p onclick=\"steal()\">x</p><a href=\"javascript:alert(2)\">나쁜 링크</a><a href=\"https://example.com\">좋은 링크</a><img src=\"http://insecure.example/a.png\" alt=\"http 이미지\"><img src=\"https://example.com/a.png\" alt=\"https 이미지\">",
-          "replies": { "totalCount": 0, "nodes": [] }
+          "replies": {
+            "totalCount": 0,
+            "nodes": []
+          }
         },
         {
-          "id": "C_2_2", "createdAt": "2026-10-01T02:00:00Z", "author": null,
-          "body": "", "bodyText": "", "bodyHTML": "",
-          "replies": { "totalCount": 0, "nodes": [] }
+          "id": "C_2_2",
+          "createdAt": "2026-10-01T02:00:00Z",
+          "author": null,
+          "body": "",
+          "bodyText": "",
+          "bodyHTML": "",
+          "replies": {
+            "totalCount": 0,
+            "nodes": []
+          }
         },
         {
-          "id": "C_2_3", "createdAt": "2026-10-01T03:00:00Z", "author": { "login": "00kang" },
+          "id": "C_2_3",
+          "createdAt": "2026-10-01T03:00:00Z",
+          "author": {
+            "login": "00kang"
+          },
           "body": "```js\nconst veryLongLine = 'a'.repeat(500);\n```\n| a | b |\n|---|---|\n| 1 | 2 |",
           "bodyText": "const veryLongLine",
           "bodyHTML": "<pre><code>const veryLongLine = 'a'.repeat(500);\n</code></pre><table><thead><tr><th>a</th><th>b</th></tr></thead><tbody><tr><td>1</td><td>2</td></tr></tbody></table>",
-          "replies": { "totalCount": 0, "nodes": [] }
+          "replies": {
+            "totalCount": 0,
+            "nodes": []
+          }
         },
         {
-          "id": "C_2_4", "createdAt": "2026-10-02T00:05:00Z", "author": { "login": "YunDaeHyeon" },
+          "id": "C_2_4",
+          "createdAt": "2026-10-02T00:05:00Z",
+          "author": {
+            "login": "YunDaeHyeon"
+          },
           "body": "🔒 다음 질문이 올라와서 이 토론은 마감되었습니다.\n늦게라도 답변 남기고 싶으시면 편하게 댓글 달아주세요 🐢",
           "bodyText": "🔒 다음 질문이 올라와서 이 토론은 마감되었습니다.",
           "bodyHTML": "<p dir=\"auto\">🔒 다음 질문이 올라와서 이 토론은 마감되었습니다.</p>",
-          "replies": { "totalCount": 0, "nodes": [] }
+          "replies": {
+            "totalCount": 0,
+            "nodes": []
+          }
         }
       ]
     }
   },
   {
-    "id": "D_3", "number": 3, "title": "[AI] 2026-10-02 오늘의 질문", "closed": false,
-    "createdAt": "2026-10-02T00:05:00Z", "url": "https://github.com/o/r/discussions/3",
+    "id": "D_3",
+    "number": 3,
+    "title": "[AI] 2026-10-02 오늘의 질문",
+    "closed": false,
+    "createdAt": "2026-10-02T00:05:00Z",
+    "url": "https://github.com/o/r/discussions/3",
+    "body": "형식이 다른 본문",
     "bodyHTML": "<p>AI 질문</p>",
-    "comments": { "totalCount": 0, "pageInfo": { "hasNextPage": false, "endCursor": null }, "nodes": [] }
+    "comments": {
+      "totalCount": 0,
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
+      "nodes": []
+    }
   },
   {
-    "id": "D_4", "number": 4, "title": "[CS] 2026-10-03 오늘의 질문", "closed": false,
-    "createdAt": "2026-10-03T00:05:00Z", "url": "https://github.com/o/r/discussions/4",
+    "id": "D_4",
+    "number": 4,
+    "title": "[CS] 2026-10-03 오늘의 질문",
+    "closed": false,
+    "createdAt": "2026-10-03T00:05:00Z",
+    "url": "https://github.com/o/r/discussions/4",
+    "body": "## 🙋 오늘의 질문\r\n\r\n**[CS]** 동기와 비동기의 차이는?\r\n\r\n---\r\n",
     "bodyHTML": "<p>CS 질문</p>",
     "comments": {
-      "totalCount": 1, "pageInfo": { "hasNextPage": false, "endCursor": null },
+      "totalCount": 1,
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
       "nodes": [
         {
-          "id": "C_4_1", "createdAt": "2026-10-03T01:00:00Z", "author": { "login": "rn1217" },
-          "body": "동기는 순서대로 처리합니다.", "bodyText": "동기는 순서대로 처리합니다.",
+          "id": "C_4_1",
+          "createdAt": "2026-10-03T01:00:00Z",
+          "author": {
+            "login": "rn1217"
+          },
+          "body": "동기는 순서대로 처리합니다.",
+          "bodyText": "동기는 순서대로 처리합니다.",
           "bodyHTML": "<p>동기는 순서대로 처리합니다.</p>",
           "replies": {
             "totalCount": 1,
             "nodes": [
               {
-                "id": "R_4_1_1", "createdAt": "2026-10-03T02:00:00Z", "author": { "login": "ssun4098" },
-                "body": "비동기는요?", "bodyText": "비동기는요?", "bodyHTML": "<p>비동기는요?</p>"
+                "id": "R_4_1_1",
+                "createdAt": "2026-10-03T02:00:00Z",
+                "author": {
+                  "login": "ssun4098"
+                },
+                "body": "비동기는요?",
+                "bodyText": "비동기는요?",
+                "bodyHTML": "<p>비동기는요?</p>"
               }
             ]
           }

@@ -1,6 +1,7 @@
 import type { Answer } from "@/domain/entities/answer";
 import type { Question } from "@/domain/entities/question";
 import { extractCategory } from "@/domain/policies/category-extractor";
+import { extractQuestionText } from "@/domain/policies/question-text";
 import type { DiscussionSource, QuestionWithAnswers } from "@/application/ports/discussion-source";
 import { sanitizeBodyHtml } from "./sanitize";
 
@@ -19,7 +20,7 @@ const COMMENT_FIELDS = `
 `;
 
 const DISCUSSION_FIELDS = `
-  id number title closed createdAt url bodyHTML
+  id number title closed createdAt url body bodyHTML
   comments(first: ${COMMENTS_PAGE}) {
     totalCount
     pageInfo { hasNextPage endCursor }
@@ -70,6 +71,7 @@ type RawDiscussion = {
   closed: boolean;
   createdAt: string;
   url: string;
+  body: string;
   bodyHTML: string;
   comments: { totalCount: number; pageInfo: PageInfo; nodes: RawComment[] };
 };
@@ -119,6 +121,7 @@ export class GitHubGraphqlSource implements DiscussionSource {
     const question: Question = {
       number: raw.number,
       title: raw.title,
+      text: extractQuestionText(raw.body) ?? raw.title,
       category,
       createdAt: raw.createdAt,
       closed: raw.closed,
