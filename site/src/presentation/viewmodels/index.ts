@@ -42,6 +42,7 @@ export type AnswerVM = {
   readonly dateTime: string;
   readonly bodyHtml: string;
   readonly isNew?: boolean;
+  readonly isEdited?: boolean;
 };
 
 export type ThreadVM = {

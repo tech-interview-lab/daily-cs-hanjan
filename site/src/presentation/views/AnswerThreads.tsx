@@ -33,9 +33,9 @@ export function AnswerThreads({ initialThreads, pollUrl, discussionUrl }: Props)
         const latest = (await response.json()) as ThreadVM[];
         if (cancelled) return;
         const merged = mergeNewThreads(threadsRef.current, latest);
-        if (merged.newAnswers || merged.newReplies) {
+        if (merged.newAnswers || merged.newReplies || merged.edited || merged.removed) {
           setThreads(merged.threads);
-          setMessage(announceNew(merged.newAnswers, merged.newReplies));
+          setMessage(announceNew(merged));
         }
         setFailures(0);
       } catch {
@@ -74,6 +74,7 @@ export function AnswerThreads({ initialThreads, pollUrl, discussionUrl }: Props)
                   </h3>
                   <time className={styles.time} dateTime={answer.dateTime}>{answer.dateText}</time>
                   {answer.isNew && <span className={styles.newLabel}>새 답변</span>}
+                  {answer.isEdited && <span className={styles.newLabel}>수정됨</span>}
                 </div>
                 {answer.bodyHtml && <div className={prose.prose} dangerouslySetInnerHTML={{ __html: answer.bodyHtml }} />}
                 {replies.length > 0 && (
@@ -86,6 +87,7 @@ export function AnswerThreads({ initialThreads, pollUrl, discussionUrl }: Props)
                             <span className={styles.replyAuthor} data-deleted={reply.authorDeleted ? "" : undefined}>{reply.authorLabel}</span>
                             <time className={styles.time} dateTime={reply.dateTime}>{reply.dateText}</time>
                             {reply.isNew && <span className={styles.newLabel}>새 답글</span>}
+                            {reply.isEdited && <span className={styles.newLabel}>수정됨</span>}
                           </div>
                           {reply.bodyHtml && <div className={prose.prose} dangerouslySetInnerHTML={{ __html: reply.bodyHtml }} />}
                         </li>
