@@ -6,7 +6,7 @@
 - 확인 방법과 결과:
   - `npm run check` 통과: 타입 검사, 레이어 의존 검사, 테스트 31개
   - `npx next build` 성공
-  - 레이어 규칙이 실제로 잡는지 확인: 위반 import 6종(presentation→adapters, 안쪽 레이어에서 `next/cache`, 어댑터 간 참조, app에서 domain 직접 import, domain에서 `node:fs`)을 일부러 넣어 `7 dependency violations` 확인 후 원복
+  - 레이어 규칙이 실제로 잡는지 확인: 위반 파일 5개(presentation→adapters, application에서 `next/cache`, 어댑터 간 참조, app에서 domain 직접 import, domain에서 `node:fs`)를 일부러 넣어 `7 dependency violations`(`next/cache` 파일 하나가 규칙 3개에 걸림) 확인 후 원복
   - 실제 GitHub 대조(`npm run test:live`, 원문): 전체 글 27, 질문 26, 전체 답변 82, 마감 댓글 제외 25, 닫힌 질문 25, 질문당 최대 제외 1, 반영 답변 57, 작성자별 합 57. 질문 번호 목록과 최상위 댓글 수는 별도 조회(`totalCount`)와 일치
   - 확인 못함: 대댓글(현재 데이터 0건)을 실제 데이터로는 검증하지 못함. fixture 테스트로만 확인. 캐시와 웹훅은 S1 이후
 - 틀렸거나 아쉬웠던 점:
