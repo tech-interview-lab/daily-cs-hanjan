@@ -24,7 +24,7 @@
     "closed": true,
     "createdAt": "2026-10-01T00:05:00Z",
     "url": "https://github.com/o/r/discussions/2",
-    "body": "## 🙋 오늘의 질문\n\n**[네트워크]** TCP와 UDP의 차이는?\n\n---\n\n💬 답변은 댓글로",
+    "body": "## 🙋 오늘의 질문\n\n**[네트워크]** TCP와 UDP의 차이는?\n\n---\n\n💬 답변은 댓글로\n\n> 전송 계층 프로토콜의 신뢰성과 속도 차이를 묻습니다.",
     "bodyHTML": "<h2 dir=\"auto\">🙋 오늘의 질문</h2><p dir=\"auto\">TCP와 UDP의 차이는?</p>",
     "comments": {
       "totalCount": 4,
