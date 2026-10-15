@@ -1,0 +1,87 @@
+.list {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+@media (min-width: 768px) {
+  .list { gap: var(--space-6); }
+  .item { padding: var(--space-6); }
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-fg-muted);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-badge);
+  background: var(--color-muted-bg);
+  color: var(--color-badge-fg);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.badge:visited { color: var(--color-badge-fg); }
+.badge:hover { text-decoration: underline; }
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-badge);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-fg-muted);
+}
+
+.status[data-open] {
+  border-color: var(--color-link);
+  color: var(--color-link);
+}
+
+.title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* 카드 제목은 링크 자체가 제목이라 평소 밑줄을 빼고, 마우스와 키보드 포커스에서 밑줄과 색으로 알린다 */
+.title a { color: var(--color-fg); text-decoration: none; }
+.title a:visited { color: var(--color-fg-muted); }
+.title a:hover, .title a:focus-visible { color: var(--color-link); text-decoration: underline; }
+
+.answers {
+  margin-top: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-fg-muted);
+}
+
+.empty {
+  padding: var(--space-6);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-card);
+  color: var(--color-fg-muted);
+}
